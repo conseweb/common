@@ -7,9 +7,33 @@ Package protos is a generated protocol buffer package.
 
 It is generated from these files:
 	error.proto
+	idp.proto
+	supervisor.proto
 
 It has these top-level messages:
 	Error
+	User
+	Device
+	AcquireCaptchaReq
+	AcquireCaptchaRsp
+	VerifyCaptchaReq
+	VerifyCaptchaRsp
+	RegisterUserReq
+	RegisterUserRsp
+	BindDeviceReq
+	BindDeviceRsp
+	VerifyDeviceReq
+	VerifyDeviceRsp
+	FarmerAccount
+	FarmerOnLineReq
+	FarmerOnLineRsp
+	BlocksRange
+	FarmerPingReq
+	FarmerPingRsp
+	FarmerConquerChallengeReq
+	FarmerConquerChallengeRsp
+	FarmerOffLineReq
+	FarmerOffLineRsp
 */
 package protos
 
