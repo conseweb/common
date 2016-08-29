@@ -31,15 +31,13 @@ type PassphraseTest struct {
 var _ = check.Suite(&PassphraseTest{})
 
 func (t *PassphraseTest) TestPassphraseOK(c *check.C) {
-	c.Check(len(Passphrase(6, pb.PassphraseLanguage_SimplifiedChinese)), check.Equals, 6)
-}
-
-func (t *PassphraseTest) TestPassphraseInvalidLang(c *check.C) {
-	c.Check(len(Passphrase(6, pb.PassphraseLanguage(9))), check.Equals, 0)
+	passphrase, err := Passphrase(256, pb.PassphraseLanguage_English)
+	c.Check(err, check.IsNil)
+	c.Check(len(passphrase), check.Not(check.Equals), 0)
 }
 
 func (t *PassphraseTest) BenchmarkPassphrase(c *check.C) {
 	for i := 0; i < c.N; i++ {
-		Passphrase(6, pb.PassphraseLanguage_SimplifiedChinese)
+		Passphrase(256, pb.PassphraseLanguage_SimplifiedChinese)
 	}
 }

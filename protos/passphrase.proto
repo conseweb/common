@@ -22,4 +22,8 @@ enum PassphraseLanguage {
     English = 0;
     SimplifiedChinese = 1;
     TraditionalChinese = 2;
+    JAPANESE = 3;
+    SPANISH = 4;
+    FRENCH = 5;
+    ITALIAN = 6;
 }
