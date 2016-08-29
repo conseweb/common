@@ -41,7 +41,7 @@ var FarmerState_value = map[string]int32{
 func (x FarmerState) String() string {
 	return proto.EnumName(FarmerState_name, int32(x))
 }
-func (FarmerState) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (FarmerState) EnumDescriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 type HashAlgo int32
 
@@ -86,7 +86,7 @@ var HashAlgo_value = map[string]int32{
 func (x HashAlgo) String() string {
 	return proto.EnumName(HashAlgo_name, int32(x))
 }
-func (HashAlgo) EnumDescriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (HashAlgo) EnumDescriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 // farmer account's info
 type FarmerAccount struct {
@@ -105,7 +105,7 @@ type FarmerAccount struct {
 func (m *FarmerAccount) Reset()                    { *m = FarmerAccount{} }
 func (m *FarmerAccount) String() string            { return proto.CompactTextString(m) }
 func (*FarmerAccount) ProtoMessage()               {}
-func (*FarmerAccount) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (*FarmerAccount) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 type FarmerOnLineReq struct {
 	FarmerID string `protobuf:"bytes,1,opt,name=farmerID" json:"farmerID,omitempty"`
@@ -114,7 +114,7 @@ type FarmerOnLineReq struct {
 func (m *FarmerOnLineReq) Reset()                    { *m = FarmerOnLineReq{} }
 func (m *FarmerOnLineReq) String() string            { return proto.CompactTextString(m) }
 func (*FarmerOnLineReq) ProtoMessage()               {}
-func (*FarmerOnLineReq) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (*FarmerOnLineReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 type FarmerOnLineRsp struct {
 	Error    *Error         `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
@@ -125,7 +125,7 @@ type FarmerOnLineRsp struct {
 func (m *FarmerOnLineRsp) Reset()                    { *m = FarmerOnLineRsp{} }
 func (m *FarmerOnLineRsp) String() string            { return proto.CompactTextString(m) }
 func (*FarmerOnLineRsp) ProtoMessage()               {}
-func (*FarmerOnLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
+func (*FarmerOnLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
 
 func (m *FarmerOnLineRsp) GetError() *Error {
 	if m != nil {
@@ -149,7 +149,7 @@ type BlocksRange struct {
 func (m *BlocksRange) Reset()                    { *m = BlocksRange{} }
 func (m *BlocksRange) String() string            { return proto.CompactTextString(m) }
 func (*BlocksRange) ProtoMessage()               {}
-func (*BlocksRange) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
+func (*BlocksRange) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
 
 type FarmerPingReq struct {
 	FarmerID    string       `protobuf:"bytes,1,opt,name=farmerID" json:"farmerID,omitempty"`
@@ -159,7 +159,7 @@ type FarmerPingReq struct {
 func (m *FarmerPingReq) Reset()                    { *m = FarmerPingReq{} }
 func (m *FarmerPingReq) String() string            { return proto.CompactTextString(m) }
 func (*FarmerPingReq) ProtoMessage()               {}
-func (*FarmerPingReq) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
+func (*FarmerPingReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
 
 func (m *FarmerPingReq) GetBlocksRange() *BlocksRange {
 	if m != nil {
@@ -180,7 +180,7 @@ type FarmerPingRsp struct {
 func (m *FarmerPingRsp) Reset()                    { *m = FarmerPingRsp{} }
 func (m *FarmerPingRsp) String() string            { return proto.CompactTextString(m) }
 func (*FarmerPingRsp) ProtoMessage()               {}
-func (*FarmerPingRsp) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
+func (*FarmerPingRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{5} }
 
 func (m *FarmerPingRsp) GetError() *Error {
 	if m != nil {
@@ -213,7 +213,7 @@ type FarmerConquerChallengeReq struct {
 func (m *FarmerConquerChallengeReq) Reset()                    { *m = FarmerConquerChallengeReq{} }
 func (m *FarmerConquerChallengeReq) String() string            { return proto.CompactTextString(m) }
 func (*FarmerConquerChallengeReq) ProtoMessage()               {}
-func (*FarmerConquerChallengeReq) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{6} }
+func (*FarmerConquerChallengeReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{6} }
 
 func (m *FarmerConquerChallengeReq) GetBlocksRange() *BlocksRange {
 	if m != nil {
@@ -231,7 +231,7 @@ type FarmerConquerChallengeRsp struct {
 func (m *FarmerConquerChallengeRsp) Reset()                    { *m = FarmerConquerChallengeRsp{} }
 func (m *FarmerConquerChallengeRsp) String() string            { return proto.CompactTextString(m) }
 func (*FarmerConquerChallengeRsp) ProtoMessage()               {}
-func (*FarmerConquerChallengeRsp) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{7} }
+func (*FarmerConquerChallengeRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{7} }
 
 func (m *FarmerConquerChallengeRsp) GetError() *Error {
 	if m != nil {
@@ -254,7 +254,7 @@ type FarmerOffLineReq struct {
 func (m *FarmerOffLineReq) Reset()                    { *m = FarmerOffLineReq{} }
 func (m *FarmerOffLineReq) String() string            { return proto.CompactTextString(m) }
 func (*FarmerOffLineReq) ProtoMessage()               {}
-func (*FarmerOffLineReq) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
+func (*FarmerOffLineReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{8} }
 
 type FarmerOffLineRsp struct {
 	Error   *Error         `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
@@ -264,7 +264,7 @@ type FarmerOffLineRsp struct {
 func (m *FarmerOffLineRsp) Reset()                    { *m = FarmerOffLineRsp{} }
 func (m *FarmerOffLineRsp) String() string            { return proto.CompactTextString(m) }
 func (*FarmerOffLineRsp) ProtoMessage()               {}
-func (*FarmerOffLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{9} }
+func (*FarmerOffLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{9} }
 
 func (m *FarmerOffLineRsp) GetError() *Error {
 	if m != nil {
@@ -471,12 +471,12 @@ var _FarmerPublic_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: fileDescriptor2,
+	Metadata: fileDescriptor3,
 }
 
-func init() { proto.RegisterFile("supervisor.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("supervisor.proto", fileDescriptor3) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor3 = []byte{
 	// 602 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x55, 0x4d, 0x73, 0xd2, 0x40,
 	0x18, 0x6e, 0x48, 0x80, 0xf0, 0x46, 0x60, 0xbb, 0x4e, 0xdb, 0x94, 0xf1, 0xa0, 0xd1, 0x71, 0x3a,
