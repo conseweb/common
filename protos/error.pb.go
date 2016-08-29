@@ -8,6 +8,7 @@ Package protos is a generated protocol buffer package.
 It is generated from these files:
 	error.proto
 	idp.proto
+	passphrase.proto
 	supervisor.proto
 
 It has these top-level messages:
