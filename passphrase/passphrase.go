@@ -117,7 +117,7 @@ func newMnemonic(entropy []byte, lang pb.PassphraseLanguage) (string, error) {
 		// Get the bytes representing the 11 bits as a 2 byte slice
 		wordBytes := padByteSlice(word.Bytes(), 2)
 
-		fmt.Printf("wordBytes: %v, index: %v\n", wordBytes, binary.BigEndian.Uint16(wordBytes))
+		//fmt.Printf("wordBytes: %v, index: %v\n", wordBytes, binary.BigEndian.Uint16(wordBytes))
 		// Convert bytes to an index and add that word to the list
 		words[i] = wordsStore[lang][binary.BigEndian.Uint16(wordBytes)]
 	}
