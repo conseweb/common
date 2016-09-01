@@ -21,6 +21,24 @@ package protos;
 //import "github.com/conseweb/common/protos/error.proto";
 import "error.proto";
 
+// idprovider public service
+service IDPP {
+    // Acquire email/tel captcha
+    rpc AcquireCaptcha(AcquireCaptchaReq) returns (AcquireCaptchaRsp) {}
+    // Verify email/tel captcha
+    rpc VerifyCaptcha(VerifyCaptchaReq) returns (VerifyCaptchaRsp) {}
+    // Register a user
+    rpc RegisterUser(RegisterUserReq) returns (RegisterUserRsp) {}
+    // Bind a device for a user
+    rpc BindDeviceForUser(BindDeviceReq) returns (BindDeviceRsp) {}
+}
+
+// idprovider admin service
+service IDPA {
+    // Verify device
+    rpc VerifyDevice(VerifyDeviceReq) returns (VerifyDeviceRsp) {}
+}
+
 // which way to unique a user
 enum SignUpType {
     EMAIL = 0;
@@ -42,7 +60,9 @@ message User {
     string pass = 4; // the pass using algo brypt(md5(user pass)), user pass can also be user real pass's md5
     string nick = 5;
     UserType userType = 6;
-    repeated Device devices = 7; // every user can hold lots of device, but now may be just one.
+    bytes wpub = 7;
+    bytes spub = 8;
+    repeated Device devices = 9; // every user can hold lots of device, but now may be just one.
 }
 
 // device for
@@ -62,24 +82,22 @@ message Device {
     DeviceFor for = 4;
     string mac = 5;
     string alias = 6;
+    bytes wpub = 7;
+    bytes spub = 8;
 }
 
-// idprovider public service
-service IDPP {
-    // Acquire email/tel captcha
-    rpc AcquireCaptcha(AcquireCaptchaReq) returns (AcquireCaptchaRsp) {}
-    // Verify email/tel captcha
-    rpc VerifyCaptcha(VerifyCaptchaReq) returns (VerifyCaptchaRsp) {}
-    // Register a user
-    rpc RegisterUser(RegisterUserReq) returns (RegisterUserRsp) {}
-    // Bind a device for a user
-    rpc BindDeviceForUser(BindDeviceReq) returns (BindDeviceRsp) {}
+// idpp create certificate request
+message IDPCertCreateReq {
+    int64 ts = 1;
+    string id = 2;
+    bytes pubKey = 3;
+    bytes sig = 4;
 }
 
-// idprovider admin service
-service IDPA {
-    // Verify device
-    rpc VerifyDevice(VerifyDeviceReq) returns (VerifyDeviceRsp) {}
+message IDPCertCreateRsp {
+    Error error = 1;
+    bytes cert = 2;
+    bytes rootcert = 3;
 }
 
 // AcquireCaptchaReq holds request
@@ -107,6 +125,10 @@ message RegisterUserReq {
     string signUp = 2;
     string nick = 3;
     string pass = 4;
+    bytes wpub = 5;
+    bytes spub = 6;
+    bytes sign = 7;
+    UserType userType = 8;
 }
 
 message RegisterUserRsp {
@@ -120,6 +142,12 @@ message BindDeviceReq {
     DeviceFor for = 3;
     string mac = 4;
     string alias = 5;
+    // device wallet public key
+    bytes wpub = 6;
+    // device signature public key
+    bytes spub = 7;
+    // request signature, though has spub, but using user's spub signature this message, dont forget!
+    bytes sign = 8;
 }
 
 message BindDeviceRsp {

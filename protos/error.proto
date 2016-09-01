@@ -43,6 +43,8 @@ enum ErrorType {
     INVALID_STATE_FARMER_OFFLINE = 10;
     // farmer challenge fail
     FARMER_CHALLENGE_FAIL = 11;
+    // invalid signature
+    INVALID_SIGNATURE = 12;
 }
 
 message Error {
