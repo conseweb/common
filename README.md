@@ -9,4 +9,4 @@ The common libraries used by Lepus.
 + protos: all the proto buffer files used by Lepus.
 + semaphore: a semaphore system used for limited concurrency worker number
 + snowflake: a distributed unique id generator inspired by Twitter's Snowflake
-+ hdwallet: a wallert & address solution inspired by [Bitcoin bip-32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
++ hdwallet: a wallet & address solution inspired by [Bitcoin bip-32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)

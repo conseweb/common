@@ -41,7 +41,6 @@ var FarmerState_value = map[string]int32{
 func (x FarmerState) String() string {
 	return proto.EnumName(FarmerState_name, int32(x))
 }
-func (FarmerState) EnumDescriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 type HashAlgo int32
 
@@ -86,7 +85,6 @@ var HashAlgo_value = map[string]int32{
 func (x HashAlgo) String() string {
 	return proto.EnumName(HashAlgo_name, int32(x))
 }
-func (HashAlgo) EnumDescriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 // farmer account's info
 type FarmerAccount struct {
@@ -102,19 +100,17 @@ type FarmerAccount struct {
 	LastChallengeTime int64 `protobuf:"varint,5,opt,name=lastChallengeTime" json:"lastChallengeTime,omitempty"`
 }
 
-func (m *FarmerAccount) Reset()                    { *m = FarmerAccount{} }
-func (m *FarmerAccount) String() string            { return proto.CompactTextString(m) }
-func (*FarmerAccount) ProtoMessage()               {}
-func (*FarmerAccount) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (m *FarmerAccount) Reset()         { *m = FarmerAccount{} }
+func (m *FarmerAccount) String() string { return proto.CompactTextString(m) }
+func (*FarmerAccount) ProtoMessage()    {}
 
 type FarmerOnLineReq struct {
 	FarmerID string `protobuf:"bytes,1,opt,name=farmerID" json:"farmerID,omitempty"`
 }
 
-func (m *FarmerOnLineReq) Reset()                    { *m = FarmerOnLineReq{} }
-func (m *FarmerOnLineReq) String() string            { return proto.CompactTextString(m) }
-func (*FarmerOnLineReq) ProtoMessage()               {}
-func (*FarmerOnLineReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
+func (m *FarmerOnLineReq) Reset()         { *m = FarmerOnLineReq{} }
+func (m *FarmerOnLineReq) String() string { return proto.CompactTextString(m) }
+func (*FarmerOnLineReq) ProtoMessage()    {}
 
 type FarmerOnLineRsp struct {
 	Error    *Error         `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
@@ -122,10 +118,9 @@ type FarmerOnLineRsp struct {
 	NextPing int64          `protobuf:"varint,3,opt,name=nextPing" json:"nextPing,omitempty"`
 }
 
-func (m *FarmerOnLineRsp) Reset()                    { *m = FarmerOnLineRsp{} }
-func (m *FarmerOnLineRsp) String() string            { return proto.CompactTextString(m) }
-func (*FarmerOnLineRsp) ProtoMessage()               {}
-func (*FarmerOnLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
+func (m *FarmerOnLineRsp) Reset()         { *m = FarmerOnLineRsp{} }
+func (m *FarmerOnLineRsp) String() string { return proto.CompactTextString(m) }
+func (*FarmerOnLineRsp) ProtoMessage()    {}
 
 func (m *FarmerOnLineRsp) GetError() *Error {
 	if m != nil {
@@ -146,20 +141,18 @@ type BlocksRange struct {
 	LowBlockNumber  uint64 `protobuf:"varint,2,opt,name=lowBlockNumber" json:"lowBlockNumber,omitempty"`
 }
 
-func (m *BlocksRange) Reset()                    { *m = BlocksRange{} }
-func (m *BlocksRange) String() string            { return proto.CompactTextString(m) }
-func (*BlocksRange) ProtoMessage()               {}
-func (*BlocksRange) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
+func (m *BlocksRange) Reset()         { *m = BlocksRange{} }
+func (m *BlocksRange) String() string { return proto.CompactTextString(m) }
+func (*BlocksRange) ProtoMessage()    {}
 
 type FarmerPingReq struct {
 	FarmerID    string       `protobuf:"bytes,1,opt,name=farmerID" json:"farmerID,omitempty"`
 	BlocksRange *BlocksRange `protobuf:"bytes,2,opt,name=blocksRange" json:"blocksRange,omitempty"`
 }
 
-func (m *FarmerPingReq) Reset()                    { *m = FarmerPingReq{} }
-func (m *FarmerPingReq) String() string            { return proto.CompactTextString(m) }
-func (*FarmerPingReq) ProtoMessage()               {}
-func (*FarmerPingReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
+func (m *FarmerPingReq) Reset()         { *m = FarmerPingReq{} }
+func (m *FarmerPingReq) String() string { return proto.CompactTextString(m) }
+func (*FarmerPingReq) ProtoMessage()    {}
 
 func (m *FarmerPingReq) GetBlocksRange() *BlocksRange {
 	if m != nil {
@@ -177,10 +170,9 @@ type FarmerPingRsp struct {
 	NextPing      int64          `protobuf:"varint,6,opt,name=nextPing" json:"nextPing,omitempty"`
 }
 
-func (m *FarmerPingRsp) Reset()                    { *m = FarmerPingRsp{} }
-func (m *FarmerPingRsp) String() string            { return proto.CompactTextString(m) }
-func (*FarmerPingRsp) ProtoMessage()               {}
-func (*FarmerPingRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{5} }
+func (m *FarmerPingRsp) Reset()         { *m = FarmerPingRsp{} }
+func (m *FarmerPingRsp) String() string { return proto.CompactTextString(m) }
+func (*FarmerPingRsp) ProtoMessage()    {}
 
 func (m *FarmerPingRsp) GetError() *Error {
 	if m != nil {
@@ -210,10 +202,9 @@ type FarmerConquerChallengeReq struct {
 	BlocksRange *BlocksRange `protobuf:"bytes,4,opt,name=blocksRange" json:"blocksRange,omitempty"`
 }
 
-func (m *FarmerConquerChallengeReq) Reset()                    { *m = FarmerConquerChallengeReq{} }
-func (m *FarmerConquerChallengeReq) String() string            { return proto.CompactTextString(m) }
-func (*FarmerConquerChallengeReq) ProtoMessage()               {}
-func (*FarmerConquerChallengeReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{6} }
+func (m *FarmerConquerChallengeReq) Reset()         { *m = FarmerConquerChallengeReq{} }
+func (m *FarmerConquerChallengeReq) String() string { return proto.CompactTextString(m) }
+func (*FarmerConquerChallengeReq) ProtoMessage()    {}
 
 func (m *FarmerConquerChallengeReq) GetBlocksRange() *BlocksRange {
 	if m != nil {
@@ -228,10 +219,9 @@ type FarmerConquerChallengeRsp struct {
 	ConquerOK bool           `protobuf:"varint,3,opt,name=conquerOK" json:"conquerOK,omitempty"`
 }
 
-func (m *FarmerConquerChallengeRsp) Reset()                    { *m = FarmerConquerChallengeRsp{} }
-func (m *FarmerConquerChallengeRsp) String() string            { return proto.CompactTextString(m) }
-func (*FarmerConquerChallengeRsp) ProtoMessage()               {}
-func (*FarmerConquerChallengeRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{7} }
+func (m *FarmerConquerChallengeRsp) Reset()         { *m = FarmerConquerChallengeRsp{} }
+func (m *FarmerConquerChallengeRsp) String() string { return proto.CompactTextString(m) }
+func (*FarmerConquerChallengeRsp) ProtoMessage()    {}
 
 func (m *FarmerConquerChallengeRsp) GetError() *Error {
 	if m != nil {
@@ -251,20 +241,18 @@ type FarmerOffLineReq struct {
 	FarmerID string `protobuf:"bytes,1,opt,name=farmerID" json:"farmerID,omitempty"`
 }
 
-func (m *FarmerOffLineReq) Reset()                    { *m = FarmerOffLineReq{} }
-func (m *FarmerOffLineReq) String() string            { return proto.CompactTextString(m) }
-func (*FarmerOffLineReq) ProtoMessage()               {}
-func (*FarmerOffLineReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{8} }
+func (m *FarmerOffLineReq) Reset()         { *m = FarmerOffLineReq{} }
+func (m *FarmerOffLineReq) String() string { return proto.CompactTextString(m) }
+func (*FarmerOffLineReq) ProtoMessage()    {}
 
 type FarmerOffLineRsp struct {
 	Error   *Error         `protobuf:"bytes,1,opt,name=error" json:"error,omitempty"`
 	Account *FarmerAccount `protobuf:"bytes,2,opt,name=account" json:"account,omitempty"`
 }
 
-func (m *FarmerOffLineRsp) Reset()                    { *m = FarmerOffLineRsp{} }
-func (m *FarmerOffLineRsp) String() string            { return proto.CompactTextString(m) }
-func (*FarmerOffLineRsp) ProtoMessage()               {}
-func (*FarmerOffLineRsp) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{9} }
+func (m *FarmerOffLineRsp) Reset()         { *m = FarmerOffLineRsp{} }
+func (m *FarmerOffLineRsp) String() string { return proto.CompactTextString(m) }
+func (*FarmerOffLineRsp) ProtoMessage()    {}
 
 func (m *FarmerOffLineRsp) GetError() *Error {
 	if m != nil {
@@ -281,16 +269,6 @@ func (m *FarmerOffLineRsp) GetAccount() *FarmerAccount {
 }
 
 func init() {
-	proto.RegisterType((*FarmerAccount)(nil), "protos.FarmerAccount")
-	proto.RegisterType((*FarmerOnLineReq)(nil), "protos.FarmerOnLineReq")
-	proto.RegisterType((*FarmerOnLineRsp)(nil), "protos.FarmerOnLineRsp")
-	proto.RegisterType((*BlocksRange)(nil), "protos.BlocksRange")
-	proto.RegisterType((*FarmerPingReq)(nil), "protos.FarmerPingReq")
-	proto.RegisterType((*FarmerPingRsp)(nil), "protos.FarmerPingRsp")
-	proto.RegisterType((*FarmerConquerChallengeReq)(nil), "protos.FarmerConquerChallengeReq")
-	proto.RegisterType((*FarmerConquerChallengeRsp)(nil), "protos.FarmerConquerChallengeRsp")
-	proto.RegisterType((*FarmerOffLineReq)(nil), "protos.FarmerOffLineReq")
-	proto.RegisterType((*FarmerOffLineRsp)(nil), "protos.FarmerOffLineRsp")
 	proto.RegisterEnum("protos.FarmerState", FarmerState_name, FarmerState_value)
 	proto.RegisterEnum("protos.HashAlgo", HashAlgo_name, HashAlgo_value)
 }
@@ -298,10 +276,6 @@ func init() {
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion3
 
 // Client API for FarmerPublic service
 
@@ -377,76 +351,52 @@ func RegisterFarmerPublicServer(s *grpc.Server, srv FarmerPublicServer) {
 	s.RegisterService(&_FarmerPublic_serviceDesc, srv)
 }
 
-func _FarmerPublic_FarmerOnLine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FarmerPublic_FarmerOnLine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(FarmerOnLineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(FarmerPublicServer).FarmerOnLine(ctx, in)
+	out, err := srv.(FarmerPublicServer).FarmerOnLine(ctx, in)
+	if err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protos.FarmerPublic/FarmerOnLine",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FarmerPublicServer).FarmerOnLine(ctx, req.(*FarmerOnLineReq))
-	}
-	return interceptor(ctx, in, info, handler)
+	return out, nil
 }
 
-func _FarmerPublic_FarmerPing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FarmerPublic_FarmerPing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(FarmerPingReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(FarmerPublicServer).FarmerPing(ctx, in)
+	out, err := srv.(FarmerPublicServer).FarmerPing(ctx, in)
+	if err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protos.FarmerPublic/FarmerPing",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FarmerPublicServer).FarmerPing(ctx, req.(*FarmerPingReq))
-	}
-	return interceptor(ctx, in, info, handler)
+	return out, nil
 }
 
-func _FarmerPublic_FarmerConquerChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FarmerPublic_FarmerConquerChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(FarmerConquerChallengeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(FarmerPublicServer).FarmerConquerChallenge(ctx, in)
+	out, err := srv.(FarmerPublicServer).FarmerConquerChallenge(ctx, in)
+	if err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protos.FarmerPublic/FarmerConquerChallenge",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FarmerPublicServer).FarmerConquerChallenge(ctx, req.(*FarmerConquerChallengeReq))
-	}
-	return interceptor(ctx, in, info, handler)
+	return out, nil
 }
 
-func _FarmerPublic_FarmerOffLine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FarmerPublic_FarmerOffLine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(FarmerOffLineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(FarmerPublicServer).FarmerOffLine(ctx, in)
+	out, err := srv.(FarmerPublicServer).FarmerOffLine(ctx, in)
+	if err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protos.FarmerPublic/FarmerOffLine",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FarmerPublicServer).FarmerOffLine(ctx, req.(*FarmerOffLineReq))
-	}
-	return interceptor(ctx, in, info, handler)
+	return out, nil
 }
 
 var _FarmerPublic_serviceDesc = grpc.ServiceDesc{
@@ -470,50 +420,5 @@ var _FarmerPublic_serviceDesc = grpc.ServiceDesc{
 			Handler:    _FarmerPublic_FarmerOffLine_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: fileDescriptor3,
-}
-
-func init() { proto.RegisterFile("supervisor.proto", fileDescriptor3) }
-
-var fileDescriptor3 = []byte{
-	// 602 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x55, 0x4d, 0x73, 0xd2, 0x40,
-	0x18, 0x6e, 0x48, 0x80, 0xf0, 0x46, 0x60, 0xbb, 0x4e, 0xdb, 0x94, 0xf1, 0xa0, 0xd1, 0x71, 0x3a,
-	0x3d, 0x74, 0x6c, 0x5a, 0x1c, 0x0f, 0x8e, 0x33, 0xb4, 0x85, 0x69, 0xa7, 0x14, 0x9c, 0xd2, 0x83,
-	0x47, 0x43, 0x58, 0x20, 0x63, 0x48, 0x68, 0x12, 0xd4, 0xab, 0x67, 0x0f, 0xfe, 0x1e, 0xff, 0x83,
-	0x3f, 0xca, 0xfd, 0x48, 0x52, 0x82, 0x61, 0xec, 0x81, 0x53, 0x76, 0xdf, 0xcf, 0xe7, 0x79, 0xf6,
-	0xdd, 0x0d, 0xa0, 0x70, 0x31, 0x27, 0xc1, 0x57, 0x27, 0xf4, 0x83, 0xa3, 0x79, 0xe0, 0x47, 0x3e,
-	0x2e, 0xf1, 0x4f, 0xd8, 0xd0, 0x48, 0x10, 0x24, 0x46, 0xe3, 0xa7, 0x04, 0xd5, 0x8e, 0x15, 0xcc,
-	0x48, 0xd0, 0xb2, 0x6d, 0x7f, 0xe1, 0x45, 0x18, 0x81, 0x3a, 0xe6, 0x86, 0xab, 0x0b, 0x5d, 0x7a,
-	0x2e, 0x1d, 0x54, 0x70, 0x1d, 0xca, 0x43, 0xcb, 0xb5, 0x3c, 0x9b, 0xe8, 0x05, 0x6a, 0xa8, 0x62,
-	0x03, 0x8a, 0x61, 0x64, 0x45, 0x44, 0x97, 0xe9, 0xb6, 0x66, 0x3e, 0x15, 0xb5, 0xc2, 0x23, 0x51,
-	0x68, 0xc0, 0x5c, 0x58, 0x07, 0xe4, 0x5a, 0x61, 0x74, 0xe3, 0x8f, 0x9c, 0xb1, 0x43, 0x46, 0x77,
-	0xce, 0x8c, 0xe8, 0x0a, 0x0d, 0x97, 0xf1, 0x3e, 0x6c, 0x33, 0xcf, 0xf9, 0xd4, 0x72, 0x5d, 0xe2,
-	0x4d, 0x08, 0x77, 0x15, 0x99, 0xcb, 0x78, 0x09, 0x75, 0x51, 0xa3, 0xef, 0x75, 0x1d, 0x8f, 0xdc,
-	0x92, 0xfb, 0x7f, 0xe1, 0x18, 0xce, 0x4a, 0x50, 0x38, 0xc7, 0xcf, 0xa0, 0xc8, 0x49, 0xf1, 0x08,
-	0xcd, 0xac, 0x26, 0x80, 0xda, 0xcc, 0x88, 0x5f, 0x43, 0xd9, 0x12, 0xe4, 0x38, 0x7e, 0xcd, 0xdc,
-	0xc9, 0x02, 0x5e, 0x62, 0xee, 0x91, 0xef, 0xd1, 0x47, 0xc7, 0x9b, 0x70, 0x66, 0xb2, 0xf1, 0x01,
-	0xb4, 0x33, 0xd7, 0xb7, 0xbf, 0x84, 0xb7, 0x16, 0x05, 0x8a, 0xf7, 0xa0, 0x3e, 0x75, 0x26, 0x53,
-	0x6e, 0xea, 0x2d, 0x66, 0x43, 0x22, 0x1a, 0x2a, 0x78, 0x17, 0x6a, 0xae, 0xff, 0x6d, 0xd9, 0xce,
-	0x1a, 0x29, 0xc6, 0x75, 0x22, 0x2e, 0xab, 0x99, 0xcb, 0x06, 0x1f, 0x80, 0x36, 0x7c, 0x68, 0x11,
-	0x03, 0x4c, 0x15, 0x5d, 0xea, 0x6e, 0xfc, 0x91, 0x32, 0xd5, 0x36, 0x46, 0x7b, 0x07, 0xaa, 0x1e,
-	0x21, 0xa3, 0xf4, 0x3c, 0x38, 0x77, 0x95, 0x1e, 0xb2, 0x3a, 0xb5, 0xc2, 0x69, 0xcb, 0x9d, 0xf8,
-	0xfc, 0xe0, 0x6a, 0x26, 0x4a, 0xf2, 0x2f, 0x63, 0xfb, 0x2a, 0xf8, 0xe2, 0x5a, 0xf0, 0x19, 0x6d,
-	0x4b, 0x5c, 0xdb, 0x5f, 0x12, 0xec, 0x0b, 0x20, 0xe7, 0xbe, 0x77, 0xbf, 0xa0, 0x9f, 0x04, 0x40,
-	0xbe, 0x50, 0x18, 0x40, 0xf4, 0x62, 0xdd, 0x39, 0xa3, 0x4a, 0x06, 0xa3, 0xfc, 0x38, 0x8c, 0xca,
-	0x7a, 0x81, 0xa3, 0xb5, 0x80, 0x36, 0xa6, 0xf5, 0x36, 0x54, 0x6c, 0x51, 0xbc, 0x7f, 0x2d, 0x74,
-	0x36, 0x5e, 0x01, 0x8a, 0xc7, 0x79, 0x3c, 0x5e, 0x3f, 0xf4, 0x9f, 0x56, 0xa3, 0x36, 0x05, 0xe9,
-	0xf0, 0x0d, 0x68, 0xcb, 0xf7, 0x56, 0x83, 0x72, 0xbf, 0xd3, 0xe9, 0x5e, 0xf5, 0xda, 0x68, 0x8b,
-	0x4a, 0x5e, 0xea, 0xf7, 0xf8, 0x5a, 0xc2, 0x2a, 0x28, 0xdd, 0xfe, 0xe0, 0x0e, 0x15, 0x0e, 0x7f,
-	0x48, 0xa0, 0xa6, 0xf2, 0x96, 0x41, 0xbe, 0xb9, 0x68, 0xd2, 0x58, 0xea, 0x1f, 0x5c, 0xb6, 0x8e,
-	0x69, 0x24, 0xcd, 0xa2, 0x2b, 0xd3, 0x3c, 0x45, 0x85, 0x64, 0xdd, 0x7c, 0x8b, 0xe4, 0x78, 0x7d,
-	0xf2, 0xee, 0x14, 0x29, 0xf1, 0xba, 0x79, 0x6c, 0xa2, 0x22, 0x6b, 0xc9, 0xec, 0x2c, 0xa1, 0x94,
-	0x6e, 0x68, 0x46, 0x39, 0xd9, 0xb0, 0x14, 0x35, 0xd9, 0xb0, 0x9c, 0x8a, 0xf9, 0xbb, 0x00, 0x4f,
-	0xe2, 0xcb, 0xb0, 0x18, 0xba, 0x8e, 0x8d, 0xcf, 0x92, 0xbd, 0x78, 0x15, 0xf0, 0x5e, 0x96, 0x6d,
-	0xfa, 0xa0, 0x34, 0xf2, 0x1d, 0xe1, 0xdc, 0xd8, 0xc2, 0xef, 0x01, 0x1e, 0x2e, 0x18, 0x5e, 0xd1,
-	0x2b, 0xbe, 0xc2, 0x8d, 0x3c, 0x33, 0xcf, 0xfe, 0x0c, 0xbb, 0xf9, 0xe3, 0x83, 0x5f, 0x64, 0x53,
-	0x72, 0xe6, 0xbd, 0xf1, 0xbf, 0x10, 0xde, 0xa1, 0x9d, 0x3c, 0x00, 0xf1, 0x10, 0x60, 0x7d, 0x85,
-	0x4b, 0x3a, 0x41, 0x8d, 0x35, 0x1e, 0x56, 0x66, 0x28, 0x7e, 0x04, 0x27, 0x7f, 0x03, 0x00, 0x00,
-	0xff, 0xff, 0x0f, 0x14, 0xdb, 0x2d, 0x23, 0x06, 0x00, 0x00,
+	Streams: []grpc.StreamDesc{},
 }

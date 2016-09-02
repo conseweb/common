@@ -43,3 +43,23 @@ func (req *AcquireCaptchaReq) Validate() bool {
 
 	return true
 }
+
+// SetSignature set signature
+func (req *RegisterUserReq) SetSignature(sign []byte) {
+	req.Sign = sign
+}
+
+// GetSignature get signature
+func (req *RegisterUserReq) GetSignature() []byte {
+	return req.Sign
+}
+
+// SetSignature set signature
+func (req *BindDeviceReq) SetSignature(sign []byte) {
+	req.Sign = sign
+}
+
+// GetSignature get signature
+func (req *BindDeviceReq) GetSignature() []byte {
+	return req.Sign
+}
