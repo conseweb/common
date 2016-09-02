@@ -16,13 +16,12 @@ limitations under the License.
 package main
 
 import (
+	"bytes"
 	"fmt"
 	pb "github.com/conseweb/common/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"bytes"
 	"strconv"
-	"log"
 )
 
 var (
@@ -40,7 +39,7 @@ func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface, function string,
 }
 
 func (coin *Lepuscoin) awardMiner(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	log.Println("invoke awardMiner")
+	logger.Debug("invoke awardMiner")
 	if len(args) != 2 {
 		return nil, fmt.Errorf("invalid args: %v, required %v args", args, 2)
 	}
@@ -55,8 +54,8 @@ func (coin *Lepuscoin) awardMiner(stub shim.ChaincodeStubInterface, args []strin
 	account.Addr = addr
 	if row, err := stub.GetRow(AccountModelTableName, []shim.Column{
 		shim.Column{&shim.Column_String_{String_: addr}},
-	}); err != nil {
-		log.Printf("get wallet %s info error: %v, maybe not exist, creating one...\n", addr, err)
+	}); err != nil || len(row.Columns) == 0 {
+		logger.Warningf("get wallet %s info error: %v, maybe not exist, creating one...\n", addr, err)
 
 		// maybe there is no miner's account, create one
 		account.Balance = convTCToCC(award)
@@ -71,10 +70,16 @@ func (coin *Lepuscoin) awardMiner(stub shim.ChaincodeStubInterface, args []strin
 				&shim.Column{Value: &shim.Column_Uint64{Uint64: uint64(award)}},
 			},
 		}); err != nil {
-			log.Printf("create account went wrong: %v\n", err)
+			logger.Errorf("table %s create account: %+v return error: %v", AccountModelTableName, account, err)
 			return nil, err
 		}
 	} else {
+		logger.Debugf("get wallet %s info: %+v. Len: %v\n", addr, row, len(row.Columns))
+		logger.Debugf("row column 0: %v\n", row.Columns[0].GetString_())
+		logger.Debugf("row column 1: %v\n", row.Columns[1].GetUint64())
+		logger.Debugf("row column 2: %v\n", row.Columns[2].GetUint64())
+		logger.Debugf("row column 3: %v\n", row.Columns[3].GetUint64())
+
 		// miner's account has already build, update
 		balance := row.Columns[1].GetUint64() + uint64(award)
 		frozenBalance := row.Columns[3].GetUint64() + uint64(award)
@@ -82,10 +87,15 @@ func (coin *Lepuscoin) awardMiner(stub shim.ChaincodeStubInterface, args []strin
 		account.Balance = convTCToCC(coinunit(balance))
 		account.FrozenBalance = convTCToCC(coinunit(frozenBalance))
 
-		row.Columns[1] = &shim.Column{Value: &shim.Column_Uint64{Uint64: balance}}
-		row.Columns[3] = &shim.Column{Value: &shim.Column_Uint64{Uint64: frozenBalance}}
-		if _, err := stub.ReplaceRow(AccountModelTableName, row); err != nil {
-			log.Printf("update account went wrong: %v\n", err)
+		if _, err := stub.ReplaceRow(AccountModelTableName, shim.Row{
+			Columns: []*shim.Column{
+				&shim.Column{Value: &shim.Column_String_{String_: addr}},
+				&shim.Column{Value: &shim.Column_Uint64{Uint64: balance}},
+				&shim.Column{Value: &shim.Column_Uint64{Uint64: row.Columns[2].GetUint64()}},
+				&shim.Column{Value: &shim.Column_Uint64{Uint64: frozenBalance}},
+			},
+		}); err != nil {
+			logger.Errorf("update account went wrong: %v\n", err)
 			return nil, err
 		}
 	}
@@ -93,18 +103,25 @@ func (coin *Lepuscoin) awardMiner(stub shim.ChaincodeStubInterface, args []strin
 	// 2. set count of coin
 	coinBytes, err := stub.GetState(CountCoins)
 	if err != nil {
+		logger.Errorf("get state %s return error: %v\n", CountCoins, err)
 		return nil, err
 	}
-	if countcoins, err := strconv.ParseUint(bytes.NewBuffer(coinBytes).String(), 10, 64); err != nil {
+	if len(coinBytes) == 0 {
+		coinBytes = []byte("0")
+	}
+	historyCoins, err := strconv.ParseUint(bytes.NewBuffer(coinBytes).String(), 10, 64)
+	if err != nil {
+		logger.Errorf("parse string to uint64 return error: %v\n", err)
 		return nil, err
-	} else {
-		countcoins += uint64(award)
-		log.Printf("Lepuscoin count: %v", countcoins)
-		if err := stub.PutState(CountCoins, bytes.NewBufferString(strconv.FormatUint(countcoins, 10)).Bytes()); err != nil {
-			return nil, err
-		}
 	}
 
-	log.Printf("miner account: %+v\n", account)
+	countcoins := uint64(award) + historyCoins
+	logger.Debugf("Lepuscoin current count: %d, history count: %d\n", countcoins, historyCoins)
+	if err := stub.PutState(CountCoins, bytes.NewBufferString(strconv.FormatUint(countcoins, 10)).Bytes()); err != nil {
+		logger.Errorf("update state %s return error: %v", CountCoins, err)
+		return nil, err
+	}
+
+	logger.Debugf("miner account: %+v\n", account)
 	return proto.Marshal(account)
 }

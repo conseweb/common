@@ -4,6 +4,7 @@ IMAGE := mintdev:latest
 INNER_GOPATH := /opt/gopath
 dev:
 	docker run --rm \
+	 --net host \
 	 --name commondev \
 	 -v $(PWD):$(INNER_GOPATH)/src \
 	 -w $(INNER_GOPATH)/src \

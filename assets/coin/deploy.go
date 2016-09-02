@@ -19,11 +19,13 @@ import (
 	"bytes"
 	"errors"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"log"
+	"github.com/op/go-logging"
 	"strconv"
 )
 
 var (
+	logger = logging.MustGetLogger(CoinName)
+
 	// account table column defines
 	AccountModelTableColumns = []*shim.ColumnDefinition{
 		// user id column, version 1 uuid
@@ -42,6 +44,8 @@ var (
 )
 
 const (
+	// coin name
+	CoinName string = "Lepuscoin"
 	// account model table name
 	AccountModelTableName string = "LepuscoinAccount"
 	// world state of how many coins has been mined
@@ -60,27 +64,33 @@ func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, a
 	if _, err := stub.GetTable(AccountModelTableName); err == shim.ErrTableNotFound {
 		err = stub.CreateTable(AccountModelTableName, AccountModelTableColumns)
 		if err != nil {
-			log.Printf("create %s table return error: %v\n", AccountModelTableName, err)
+			logger.Errorf("create %s table return error: %v\n", AccountModelTableName, err)
 			return nil, err
 		}
+
+		logger.Debugf("successfully create table %s\n", AccountModelTableName)
 	}
 
 	// create world state of how many coins has been mined
 	if _, err := stub.GetState(CountCoins); err != nil {
 		err = stub.PutState(CountCoins, bytes.NewBufferString(strconv.FormatUint(0, 10)).Bytes())
 		if err != nil {
-			log.Printf("create world state of how many coins has been mined return error: %v\n", err)
+			logger.Errorf("create world state of how many coins has been mined return error: %v\n", err)
 			return nil, err
 		}
+
+		logger.Debugf("successfully set state %s to 0", CountCoins)
 	}
 
-	log.Println("deploy Lepuscoin successfully")
+	logger.Debugf("bytes.NewBufferString(strconv.FormatUint(0, 10)): %s\n", bytes.NewBufferString(strconv.FormatUint(0, 10)).String())
+	logger.Debugf("deploy %s successfully\n", CoinName)
 	return nil, nil
 }
 
 func main() {
+	logging.SetLevel(logging.DEBUG, CoinName)
 	err := shim.Start(new(Lepuscoin))
 	if err != nil {
-		log.Fatalf("deploy Lepuscoin return err: %v\n", err)
+		logger.Fatalf("deploy %s return err: %v\n", CoinName, err)
 	}
 }

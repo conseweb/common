@@ -10,7 +10,16 @@ Lepuscoin now has 4 units:
 
 ***Notice***chaincode request(invoke/query) args coin unit always be cc, such as "1.999", means 1.999cc
 
+### developer test
+```
+CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 ./coin
+```
+```
+docker exec -it xxxx bash
+```
 ### deploy request
+
+REST
 ```
 {
     "jsonrpc": "2.0",
@@ -30,9 +39,14 @@ Lepuscoin now has 4 units:
     "id": 1
 }
 ```
-
+CLI
+```
+peer chaincode deploy -n mycc -l golang -c '{"Function":"deploy","Args":[]}'
+```
 ### invoke request
 #### awardMiner
+
+REST
 ```
 {
     "jsonrpc": "2.0",
@@ -54,9 +68,15 @@ Lepuscoin now has 4 units:
     "id": 1
 }
 ```
+CLI
+```
+peer chaincode invoke -n mycc -l golang -c '{"Function":"awardMiner", "Args":["addr1", "100"]}'
+```
 
 ### query request
 #### queryAccount
+
+REST
 ```
 {
     "jsonrpc": "2.0",
@@ -77,7 +97,14 @@ Lepuscoin now has 4 units:
     "id": 1
 }
 ```
+
+CLI
+```
+peer chaincode query -n mycc -l golang -c '{"Function":"queryAccount", "Args":["addr1"]}'
+```
 #### queryCoinCount
+
+REST
 ```
 {
     "jsonrpc": "2.0",
@@ -96,4 +123,9 @@ Lepuscoin now has 4 units:
     },
     "id": 1
 }
+```
+
+CLI
+```
+peer chaincode query -n mycc -l golang -c '{"Function":"queryCoinCount", "Args":[]}'
 ```

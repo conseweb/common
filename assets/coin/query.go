@@ -20,7 +20,6 @@ import (
 	pb "github.com/conseweb/common/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"log"
 )
 
 var (
@@ -52,20 +51,29 @@ func (coin *Lepuscoin) queryAccount(stub shim.ChaincodeStubInterface, args []str
 	row, err := stub.GetRow(AccountModelTableName, []shim.Column{
 		shim.Column{&shim.Column_String_{String_: addr}},
 	})
-	if err != nil {
-		log.Printf("get account info went wrong: %v\n", err)
-		return nil, err
+	if err != nil || len(row.Columns) == 0 {
+		logger.Errorf("get account info went wrong: %v\n", err)
+		return nil, fmt.Errorf("get account info return error: %v or no info find", err)
 	}
 
-	account.Addr = addr
+	logger.Debugf("fetch account row: %+v\n", row.GetColumns())
+
+	account.Addr = row.Columns[0].GetString_()
 	account.Balance = convTCToCC(coinunit(row.Columns[1].GetUint64()))
 	account.AvailableBalance = convTCToCC(coinunit(row.Columns[2].GetUint64()))
 	account.FrozenBalance = convTCToCC(coinunit(row.Columns[3].GetUint64()))
 
-	log.Printf("account info: %+v\n", account)
+	logger.Debugf("account info: %+v\n", account)
 	return proto.Marshal(account)
 }
 
 func (coin *Lepuscoin) queryCoinCount(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	return stub.GetState(CountCoins)
+	coinBytes, err := stub.GetState(CountCoins)
+	if err != nil {
+		logger.Errorf("get state %s return error: %v", CountCoins, err)
+		return nil, err
+	}
+
+	logger.Debugf("%s current amount: %d\n", CoinName, coinBytes)
+	return coinBytes, nil
 }
