@@ -15,28 +15,14 @@ limitations under the License.
 */
 package main
 
-import "strconv"
-
-type coinunit uint64
-
-const (
-	tinycoin  coinunit = 1                // tc
-	minicoin           = tinycoin * 1000  // mc
-	smallcoin          = minicoin * 1000  // sc
-	coin               = smallcoin * 1000 // cc
+import (
+	"github.com/conseweb/common/assets/lepuscoin/coin"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"log"
 )
 
-// convert string coin into table coin
-func parseCCToTC(strcoin string) (coinunit, error) {
-	float64coin, err := strconv.ParseFloat(strcoin, 64)
-	if err != nil {
-		return 0, err
+func main() {
+	if err := shim.Start(new(coin.Lepuscoin)); err != nil {
+		log.Fatalf("start Lepuscoin return error: %v, exiting\n", err)
 	}
-
-	return coinunit(float64coin * float64(coin)), nil
-}
-
-// convert tinycoin into coin
-func convTCToCC(tc coinunit) float64 {
-	return float64(tc) / float64(coin)
 }

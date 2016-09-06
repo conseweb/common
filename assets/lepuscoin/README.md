@@ -12,7 +12,7 @@ Lepuscoin now has 4 units:
 
 ### developer test
 ```
-CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 ./coin
+CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 ./lepuscoin
 ```
 ```
 docker exec -it xxxx bash
@@ -102,7 +102,7 @@ CLI
 ```
 peer chaincode query -n mycc -l golang -c '{"Function":"queryAccount", "Args":["addr1"]}'
 ```
-#### queryCoinCount
+#### query_cb
 
 REST
 ```
@@ -115,7 +115,7 @@ REST
             "name": "CHAINCODE_HASH_HERE"
         },
         "ctorMsg": {
-            "function": "queryCoinCount",
+            "function": "query_cb",
             "args": [
             ]
         },
@@ -127,5 +127,5 @@ REST
 
 CLI
 ```
-peer chaincode query -n mycc -l golang -c '{"Function":"queryCoinCount", "Args":[]}'
+peer chaincode query -n mycc -l golang -c '{"Function":"query_cb", "Args":[]}'
 ```

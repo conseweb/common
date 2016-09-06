@@ -21,7 +21,28 @@ package protos;
 // account model digitalAssets
 message Account {
     string addr = 1;
-    double balance = 2;
-    double availableBalance = 3;
-    double frozenBalance = 4;
+    uint64 balance = 2;
+}
+
+// utxo tx
+message TX {
+    uint64 version = 1;
+    int64 lockTime = 2;
+    message TXIN {
+        uint32 ix = 1;
+        bytes sourceHash = 2;
+        bytes script = 3;
+        uint32 sequence = 4;
+    }
+    repeated TXIN txin = 3;
+
+    message TXOUT {
+        uint64 value = 1;
+        bytes script = 2;
+        bytes color = 3;
+        uint64 quantity = 4;
+    }
+    repeated TXOUT txout = 4;
+    repeated bytes blocks = 5;
+    uint64 fee = 6;
 }

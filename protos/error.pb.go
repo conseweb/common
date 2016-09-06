@@ -2,6 +2,45 @@
 // source: error.proto
 // DO NOT EDIT!
 
+/*
+Package protos is a generated protocol buffer package.
+
+It is generated from these files:
+	error.proto
+	idprovider.proto
+	lepuscoin.proto
+	passphrase.proto
+	supervisor.proto
+
+It has these top-level messages:
+	Error
+	User
+	Device
+	IDPCertCreateReq
+	IDPCertCreateRsp
+	AcquireCaptchaReq
+	AcquireCaptchaRsp
+	VerifyCaptchaReq
+	VerifyCaptchaRsp
+	RegisterUserReq
+	RegisterUserRsp
+	BindDeviceReq
+	BindDeviceRsp
+	VerifyDeviceReq
+	VerifyDeviceRsp
+	Account
+	TX
+	FarmerAccount
+	FarmerOnLineReq
+	FarmerOnLineRsp
+	BlocksRange
+	FarmerPingReq
+	FarmerPingRsp
+	FarmerConquerChallengeReq
+	FarmerConquerChallengeRsp
+	FarmerOffLineReq
+	FarmerOffLineRsp
+*/
 package protos
 
 import proto "github.com/golang/protobuf/proto"
