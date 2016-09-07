@@ -17,43 +17,52 @@ package coin
 
 import (
 	"encoding/base64"
+	"fmt"
 	pb "github.com/conseweb/common/protos"
 )
 
-func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
+// 1. 转账是不会产生新货币的
+// 2. TODO 每个tx有fee,会发送给区块的生成者,但是怎么给他呢
+// 3. 在进行utxo执行前,应该先验证txin是否拥有足够的余额
+
+func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		return nil, ErrInvalidArgs
 	}
 
-	// utxo
-	utxo := MakeUTXO(store)
+	// parse tx
 	txDataBase64 := args[0]
 	txData, err := base64.StdEncoding.DecodeString(txDataBase64)
 	if err != nil {
-		logger.Errorf("Decoding base64 error: %v\n", err)
-		return nil, err
+		return nil, fmt.Errorf("Error decoding TX as base64:  %s", err)
 	}
 
 	tx, err := pb.ParseTXBytes(txData)
 	if err != nil {
-		logger.Errorf("Unmarshal tx bytes error: %v\n", err)
-		return nil, err
+		return nil, fmt.Errorf("Error parseing tx bytes into TX: %v", err)
 	}
 
+	// utxo
+	utxo := MakeUTXO(store)
 	execResult, err := utxo.Execute(tx)
 	if err != nil {
 		logger.Errorf("execute coinbase tx return error: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("Error execute coinbase tx: %s", err)
 	}
 
-	if !execResult.IsCoinbase {
-		return nil, ErrMustCoinbase
+	if execResult.IsCoinbase {
+		return nil, fmt.Errorf("the Tx must not be a coinbase tx")
+	}
+
+	// current outputs must less than prior outputs
+	if execResult.SumCurrentOutputs > execResult.SumPriorOutputs {
+		return nil, fmt.Errorf("sumOfCurrentOutputs > sumOfPriorOutputs: sumOfCurrentOutputs = %d, sumOfPriorOutputs = %d", execResult.SumCurrentOutputs, execResult.SumPriorOutputs)
 	}
 
 	// account
 	account := MakeAccount(store)
-	if err := account.Coinbase(tx); err != nil {
-		logger.Errorf("Error execute account model coinbase: %v", err)
+	if err := account.Transfer(tx); err != nil {
+		logger.Errorf("Error execute account model transfer: %v", err)
 		return nil, err
 	}
 

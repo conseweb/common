@@ -30,6 +30,10 @@ It has these top-level messages:
 	VerifyDeviceRsp
 	Account
 	TX
+	ExecResult
+	QueryAddrResult
+	QueryAddrResults
+	LepuscoinInfo
 	FarmerAccount
 	FarmerOnLineReq
 	FarmerOnLineRsp

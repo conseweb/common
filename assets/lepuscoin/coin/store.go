@@ -16,13 +16,15 @@ limitations under the License.
 package coin
 
 import (
-	"fmt"
-
 	"bytes"
+	"encoding/hex"
+	"fmt"
+	"strconv"
+	"strings"
+
 	pb "github.com/conseweb/common/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"strconv"
 )
 
 const coinbase = "Lepuscoinbase"
@@ -38,6 +40,25 @@ func (k *Key) String() string {
 	return fmt.Sprintf("%s:%d", k.TxHashAsHex, k.TxIndex)
 }
 
+// parseKey parse key string into Key object, return error if something invalid happened
+func parseKey(keyStr string) (*Key, error) {
+	if !strings.Contains(keyStr, ":") {
+		return nil, ErrInvalidTxKey
+	}
+
+	subKeys := strings.Split(keyStr, ":")
+	if len(subKeys) != 2 {
+		return nil, ErrInvalidTxKey
+	}
+
+	txIdx, err := strconv.ParseUint(subKeys[1], 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Key{TxHashAsHex: subKeys[0], TxIndex: uint32(txIdx)}, nil
+}
+
 func generateAccountKey(addr string) string {
 	return fmt.Sprintf("account_addr_%s", addr)
 }
@@ -49,8 +70,8 @@ type Store interface {
 	GetTxOut(*Key) (*pb.TX_TXOUT, bool, error)
 	PutTxOut(*Key, *pb.TX_TXOUT) error
 	DelTxOut(*Key) error
-	GetTx(string) ([]byte, bool, error)
-	PutTx(string, []byte) error
+	GetTx(string) (*pb.TX, bool, error)
+	PutTx(*pb.TX) error
 	GetCoinbase() uint64
 	AddCoinbase(uint64) error
 	GetAccount(string) (*pb.Account, error)
@@ -104,7 +125,7 @@ func (s *ChaincodeStore) PutTxOut(key *Key, value *pb.TX_TXOUT) error {
 }
 
 // GetTx returns a transaction for the given hash
-func (s *ChaincodeStore) GetTx(key string) ([]byte, bool, error) {
+func (s *ChaincodeStore) GetTx(key string) (*pb.TX, bool, error) {
 	data, err := s.stub.GetState(key)
 	if err != nil {
 		return nil, false, fmt.Errorf("Error getting state from stub:  %s", err)
@@ -113,12 +134,22 @@ func (s *ChaincodeStore) GetTx(key string) ([]byte, bool, error) {
 		return nil, false, nil
 	}
 
-	return data, true, nil
+	tx, err := pb.ParseTXBytes(data)
+	if err != nil {
+		return nil, false, err
+	}
+
+	return tx, true, nil
 }
 
 // PutTx adds a transaction to the state with the hash as a key
-func (s *ChaincodeStore) PutTx(key string, value []byte) error {
-	return s.stub.PutState(key, value)
+func (s *ChaincodeStore) PutTx(tx *pb.TX) error {
+	txBytes, err := tx.Bytes()
+	if err != nil {
+		return err
+	}
+
+	return s.stub.PutState(hex.EncodeToString(tx.TxHash()), txBytes)
 }
 
 // GetCoinbase returns monetary supply, based on account model
@@ -185,7 +216,7 @@ func (s *ChaincodeStore) PutAccount(account *pb.Account) error {
 // InMemoryStore used for unit testing
 type InMemoryStore struct {
 	Map        map[*Key]*pb.TX_TXOUT
-	TranMap    map[string][]byte
+	TranMap    map[string]*pb.TX
 	Accounts   map[string]*pb.Account
 	coinsupply uint64
 }
@@ -194,7 +225,7 @@ type InMemoryStore struct {
 func MakeInMemoryStore() Store {
 	ims := &InMemoryStore{}
 	ims.Map = make(map[*Key]*pb.TX_TXOUT)
-	ims.TranMap = make(map[string][]byte)
+	ims.TranMap = make(map[string]*pb.TX)
 	return ims
 }
 
@@ -217,14 +248,14 @@ func (ims *InMemoryStore) PutTxOut(key *Key, value *pb.TX_TXOUT) error {
 }
 
 // GetTx returns the transaction for the given hash
-func (ims *InMemoryStore) GetTx(key string) ([]byte, bool, error) {
+func (ims *InMemoryStore) GetTx(key string) (*pb.TX, bool, error) {
 	value, ok := ims.TranMap[key]
 	return value, ok, nil
 }
 
 // PutTx saves the hash and transaction in memory
-func (ims *InMemoryStore) PutTx(key string, value []byte) error {
-	ims.TranMap[key] = value
+func (ims *InMemoryStore) PutTx(value *pb.TX) error {
+	ims.TranMap[hex.EncodeToString(value.TxHash())] = value
 	return nil
 }
 

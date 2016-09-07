@@ -55,9 +55,8 @@ func NewTxOut(value uint64, pkScript []byte) *TX_TXOUT {
 	}
 }
 
-
 func (tx *TX) Base64Bytes() ([]byte, error) {
-	txBytes, err := proto.Marshal(tx)
+	txBytes, err := tx.Bytes()
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +65,10 @@ func (tx *TX) Base64Bytes() ([]byte, error) {
 	base64.StdEncoding.Encode(buf, txBytes)
 
 	return buf, nil
+}
+
+func (tx *TX) Bytes() ([]byte, error) {
+	return proto.Marshal(tx)
 }
 
 // AddTxIn adds a transaction input to the message.
@@ -80,7 +83,7 @@ func (msg *TX) AddTxOut(to *TX_TXOUT) {
 
 // TxHash generates the Hash for the transaction.
 func (msg *TX) TxHash() []byte {
-	txBytes, err := proto.Marshal(msg)
+	txBytes, err := msg.Bytes()
 	if err != nil {
 		return nil
 	}
@@ -145,9 +148,29 @@ func (msg *TX) Copy() *TX {
 			Script:   newScript,
 			Color:    oldTxOut.Color,
 			Quantity: oldTxOut.Quantity,
+			Addr:     oldTxOut.Addr,
 		}
 		newTx.AddTxOut(newTxOut)
 	}
 
 	return &newTx
+}
+
+func (e *ExecResult) Bytes() ([]byte, error) {
+	return proto.Marshal(e)
+}
+
+func (r *QueryAddrResult) Bytes() ([]byte, error) {
+	return proto.Marshal(r)
+}
+
+// ParseTXBytes unmarshal txData into TX object
+func ParseTXBytes(txData []byte) (*TX, error) {
+	tx := new(TX)
+	err := proto.Unmarshal(txData, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	return tx, nil
 }
