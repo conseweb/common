@@ -15,8 +15,9 @@ var _ = math.Inf
 
 // account model digitalAssets
 type Account struct {
-	Addr    string `protobuf:"bytes,1,opt,name=addr" json:"addr,omitempty"`
-	Balance uint64 `protobuf:"varint,2,opt,name=balance" json:"balance,omitempty"`
+	Addr     string `protobuf:"bytes,1,opt,name=addr" json:"addr,omitempty"`
+	Balance  uint64 `protobuf:"varint,2,opt,name=balance" json:"balance,omitempty"`
+	TxoutKey string `protobuf:"bytes,3,opt,name=txoutKey" json:"txoutKey,omitempty"`
 }
 
 func (m *Account) Reset()         { *m = Account{} }
@@ -67,8 +68,69 @@ type TX_TXOUT struct {
 	Script   []byte `protobuf:"bytes,2,opt,name=script,proto3" json:"script,omitempty"`
 	Color    []byte `protobuf:"bytes,3,opt,name=color,proto3" json:"color,omitempty"`
 	Quantity uint64 `protobuf:"varint,4,opt,name=quantity" json:"quantity,omitempty"`
+	Addr     string `protobuf:"bytes,5,opt,name=addr" json:"addr,omitempty"`
 }
 
 func (m *TX_TXOUT) Reset()         { *m = TX_TXOUT{} }
 func (m *TX_TXOUT) String() string { return proto.CompactTextString(m) }
 func (*TX_TXOUT) ProtoMessage()    {}
+
+// ExecResult is the result of processing a transaction
+type ExecResult struct {
+	SumCurrentOutputs uint64 `protobuf:"varint,1,opt,name=sumCurrentOutputs" json:"sumCurrentOutputs,omitempty"`
+	SumPriorOutputs   uint64 `protobuf:"varint,2,opt,name=sumPriorOutputs" json:"sumPriorOutputs,omitempty"`
+	IsCoinbase        bool   `protobuf:"varint,3,opt,name=isCoinbase" json:"isCoinbase,omitempty"`
+}
+
+func (m *ExecResult) Reset()         { *m = ExecResult{} }
+func (m *ExecResult) String() string { return proto.CompactTextString(m) }
+func (*ExecResult) ProtoMessage()    {}
+
+// QueryAddrResult is the result of query function query_addr
+type QueryAddrResult struct {
+	Account *Account  `protobuf:"bytes,1,opt,name=account" json:"account,omitempty"`
+	Txout   *TX_TXOUT `protobuf:"bytes,2,opt,name=txout" json:"txout,omitempty"`
+}
+
+func (m *QueryAddrResult) Reset()         { *m = QueryAddrResult{} }
+func (m *QueryAddrResult) String() string { return proto.CompactTextString(m) }
+func (*QueryAddrResult) ProtoMessage()    {}
+
+func (m *QueryAddrResult) GetAccount() *Account {
+	if m != nil {
+		return m.Account
+	}
+	return nil
+}
+
+func (m *QueryAddrResult) GetTxout() *TX_TXOUT {
+	if m != nil {
+		return m.Txout
+	}
+	return nil
+}
+
+// QueryAddrResults
+type QueryAddrResults struct {
+	Results []*QueryAddrResult `protobuf:"bytes,1,rep,name=results" json:"results,omitempty"`
+}
+
+func (m *QueryAddrResults) Reset()         { *m = QueryAddrResults{} }
+func (m *QueryAddrResults) String() string { return proto.CompactTextString(m) }
+func (*QueryAddrResults) ProtoMessage()    {}
+
+func (m *QueryAddrResults) GetResults() []*QueryAddrResult {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+// LepuscoinInfo
+type LepuscoinInfo struct {
+	CoinTotal uint64 `protobuf:"varint,1,opt,name=coinTotal" json:"coinTotal,omitempty"`
+}
+
+func (m *LepuscoinInfo) Reset()         { *m = LepuscoinInfo{} }
+func (m *LepuscoinInfo) String() string { return proto.CompactTextString(m) }
+func (*LepuscoinInfo) ProtoMessage()    {}

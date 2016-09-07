@@ -16,7 +16,10 @@ limitations under the License.
 package coin
 
 import (
+	"encoding/hex"
 	"errors"
+	"fmt"
+	pb "github.com/conseweb/common/protos"
 )
 
 type Account struct {
@@ -32,22 +35,105 @@ func MakeAccount(store Store) *Account {
 }
 
 // Coinbase give addr some coin and add coin counter
-func (a *Account) Coinbase(supply uint64, addr string) error {
-	if addr == "" {
-		return errors.New("no addr specified")
+func (a *Account) Coinbase(tx *pb.TX) error {
+	txHash := tx.TxHash()
+	for idx, txout := range tx.Txout {
+		outKey := &Key{TxHashAsHex: hex.EncodeToString(txHash), TxIndex: uint32(idx)}
+
+		if txout.Addr == "" {
+			return errors.New("no addr specified")
+		}
+
+		// add coin counter
+		if err := a.store.AddCoinbase(txout.Value); err != nil {
+			return err
+		}
+
+		// add account
+		account, err := a.store.GetAccount(txout.Addr)
+		if err != nil {
+			return err
+		}
+
+		account.Balance += txout.Value
+		account.Addr = txout.Addr
+		account.TxoutKey = outKey.String()
+
+		if err := a.store.PutAccount(account); err != nil {
+			return err
+		}
 	}
 
-	// add coin counter
-	if err := a.store.AddCoinbase(supply); err != nil {
-		return err
+	return nil
+}
+
+// Transfer transfer balance from in to out
+func (a *Account) Transfer(tx *pb.TX) error {
+	for _, ti := range tx.Txin {
+		prevTxHash := ti.SourceHash
+		prevOutputIx := ti.Ix
+		keyToPrevOutput := &Key{TxHashAsHex: hex.EncodeToString(prevTxHash), TxIndex: prevOutputIx}
+		value, ok, err := a.store.GetTxOut(keyToPrevOutput)
+		if err != nil {
+			return fmt.Errorf("Error getting state form store: %v", err)
+		}
+
+		if !ok {
+			// Previous output not found
+			return fmt.Errorf("Could not find previous transaction output with key = %v", keyToPrevOutput)
+		}
+
+		account, err := a.store.GetAccount(value.Addr)
+		if err != nil {
+			return err
+		}
+
+		if account.Balance < value.Value {
+			return fmt.Errorf("Account %s dont't have enough balance", value.Addr)
+		}
+
+		account.Balance -= value.Value
+		account.TxoutKey = ""
+		if err := a.store.PutAccount(account); err != nil {
+			return err
+		}
 	}
 
-	// add account
+	txHash := tx.TxHash()
+	for idx, to := range tx.Txout {
+		_, err := a.store.GetAccount(to.Addr)
+		if err != nil {
+			logger.Warningf("get account doesnt exist, creating one...")
+		}
+
+		outKey := &Key{TxHashAsHex: hex.EncodeToString(txHash), TxIndex: uint32(idx)}
+		account := new(pb.Account)
+		account.Addr = to.Addr
+		account.Balance = to.Value
+		account.TxoutKey = outKey.String()
+
+		if err := a.store.PutAccount(account); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// QueryAccountByAddr query account info using addr
+func (a *Account) QueryAccountByAddr(addr string) (*pb.Account, error) {
 	account, err := a.store.GetAccount(addr)
 	if err != nil {
-		return err
+		account = &pb.Account{
+			Addr:     addr,
+			Balance:  0,
+			TxoutKey: "",
+		}
+
+		if err := a.store.PutAccount(account); err != nil {
+			return nil, err
+		}
 	}
 
-	account.Balance += supply
-	return a.store.PutAccount(account)
+	return account, nil
 }

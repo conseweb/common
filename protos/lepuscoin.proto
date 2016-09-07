@@ -22,6 +22,7 @@ package protos;
 message Account {
     string addr = 1;
     uint64 balance = 2;
+    string txoutKey = 3;
 }
 
 // utxo tx
@@ -41,8 +42,33 @@ message TX {
         bytes script = 2;
         bytes color = 3;
         uint64 quantity = 4;
+        string addr = 5; // who will receive this txout
     }
     repeated TXOUT txout = 4;
     repeated bytes blocks = 5;
     uint64 fee = 6;
+}
+
+
+// ExecResult is the result of processing a transaction
+message ExecResult {
+    uint64 sumCurrentOutputs = 1;
+    uint64 sumPriorOutputs = 2;
+    bool isCoinbase = 3;
+}
+
+// QueryAddrResult is the result of query function query_addr
+message QueryAddrResult {
+    Account account = 1;
+    TX.TXOUT txout = 2;
+}
+
+// QueryAddrResults
+message QueryAddrResults {
+    repeated QueryAddrResult results = 1;
+}
+
+// LepuscoinInfo
+message LepuscoinInfo {
+    uint64 coinTotal = 1;
 }

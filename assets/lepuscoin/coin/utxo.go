@@ -22,7 +22,6 @@ import (
 	"math"
 
 	pb "github.com/conseweb/common/protos"
-	"github.com/golang/protobuf/proto"
 )
 
 // UTXO includes the storage for the chaincode API or an in memory
@@ -50,22 +49,11 @@ func (u *UTXO) isCoinbase(index uint32) bool {
 	return index == math.MaxUint32
 }
 
-// ExecResult is the result of processing a transaction
-type ExecResult struct {
-	SumCurrentOutputs uint64
-	SumPriorOutpus    uint64
-	IsCoinbase        bool
-}
-
 // Execute processes the given transaction and outputs a result
-func (u *UTXO) Execute(txData []byte) (*ExecResult, error) {
-	newTx, err := parseTXBytes(txData)
-	if err != nil {
-		return nil, err
-	}
-
-	txhash := u.getTXHash(txData)
-	execResult := &ExecResult{}
+func (u *UTXO) Execute(tx *pb.TX) (*pb.ExecResult, error) {
+	newTx := tx.Copy()
+	txhash := newTx.TxHash()
+	execResult := &pb.ExecResult{}
 
 	// Loop through outputs first
 	for index, output := range newTx.Txout {
@@ -80,7 +68,7 @@ func (u *UTXO) Execute(txData []byte) (*ExecResult, error) {
 		}
 
 		// Store the output in utxo
-		u.Store.PutTxOut(currKey, &pb.TX_TXOUT{Script: output.Script, Value: output.Value})
+		u.Store.PutTxOut(currKey, output)
 		execResult.SumCurrentOutputs += output.Value
 	}
 
@@ -108,30 +96,32 @@ func (u *UTXO) Execute(txData []byte) (*ExecResult, error) {
 
 			// verified, now remove prior outputs
 			u.Store.DelTxOut(keyToPrevOutput)
-			execResult.SumPriorOutpus += value.Value
+			execResult.SumPriorOutputs += value.Value
 		}
 
-		hex := hex.EncodeToString(txhash[:])
-		logger.Debugf("Put TRAN %s", hex)
-		u.Store.PutTx(hex, txData)
+		u.Store.PutTx(newTx)
 	}
 
 	return execResult, nil
 }
 
 // Query search the storage for a given transaction hash
-func (u *UTXO) Query(txHashHex string) ([]byte, error) {
+func (u *UTXO) QueryTx(txHashHex string) (*pb.TX, error) {
 	tx, _, err := u.Store.GetTx(txHashHex)
 	return tx, err
 }
 
-func parseTXBytes(txData []byte) (*pb.TX, error) {
-	tx := new(pb.TX)
-	err := proto.Unmarshal(txData, tx)
+// QueryTxOut search txout
+func (u *UTXO) QueryTxOut(keyStr string) (*pb.TX_TXOUT, error) {
+	key, err := parseKey(keyStr)
 	if err != nil {
-		logger.Errorf("unmarshal tx data return error: %v\n", err)
 		return nil, err
 	}
 
-	return tx, nil
+	out, _, err := u.Store.GetTxOut(key)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
 }

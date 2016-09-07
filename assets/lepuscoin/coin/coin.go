@@ -18,11 +18,8 @@ package coin
 import (
 	"errors"
 
-	"bytes"
-	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/op/go-logging"
-	"strconv"
 )
 
 var (
@@ -57,6 +54,7 @@ func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, a
 // Invoke function
 const (
 	IF_COINBASE string = "invoke_coinbase"
+	IF_TRANSFER string = "invoke_transfer"
 )
 
 // Invoke
@@ -67,15 +65,19 @@ func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface, function string,
 	switch function {
 	case IF_COINBASE:
 		return coin.coinbase(store, args)
+	case IF_TRANSFER:
+		return coin.transfer(store, args)
 	default:
-		return nil, fmt.Errorf("unsupported function type: %s", function)
+		return nil, ErrUnsupportedOperation
 	}
 }
 
 // Query function
 const (
-	QF_TX = "query_tx"
-	QF_CB = "query_cb"
+	QF_ADDR  = "query_addr"
+	QF_ADDRS = "query_addrs"
+	QF_TX    = "query_tx"
+	QF_COIN  = "query_coin"
 )
 
 // Query
@@ -84,36 +86,15 @@ func (coin *Lepuscoin) Query(stub shim.ChaincodeStubInterface, function string, 
 	store := MakeChaincodeStore(stub)
 
 	switch function {
+	case QF_ADDR:
+		return coin.queryAddr(store, args)
+	case QF_ADDRS:
+		return coin.queryAddrs(store, args)
 	case QF_TX:
 		return coin.queryTx(store, args)
-	case QF_CB:
-		return coin.queryCB(store, args)
+	case QF_COIN:
+		return coin.queryCoin(store, args)
 	default:
-		return nil, fmt.Errorf("unsupported function type: %s", function)
+		return nil, ErrUnsupportedOperation
 	}
-}
-
-func (coin *Lepuscoin) queryTx(store Store, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("invalid args")
-	}
-
-	// utxo
-	utxo := MakeUTXO(store)
-	tx, err := utxo.Query(args[0])
-	if err != nil {
-		return nil, fmt.Errorf("Error querying for transaction:  %s", err)
-	}
-
-	logger.Debugf("query tx return bytes: %s", bytes.NewBuffer(tx).String())
-	return tx, nil
-}
-
-func (coin *Lepuscoin) queryCB(store Store, args []string) ([]byte, error) {
-	if len(args) != 0 {
-		return nil, errors.New("invalid args")
-	}
-
-	cb := store.GetCoinbase()
-	return bytes.NewBufferString(strconv.FormatUint(cb, 10)).Bytes(), nil
 }
