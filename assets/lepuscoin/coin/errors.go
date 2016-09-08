@@ -24,12 +24,12 @@ var (
 	ErrInvalidTxKey = errors.New("invalid tx key")
 	// ErrUnsupportedOperation returned if invoke or query using unsupported function name
 	ErrUnsupportedOperation = errors.New("unsupported operation")
-	// ErrBadEncoding
-	ErrBadEncoding = errors.New("bad encoding")
-	// ErrParseTx
-	ErrParseTx = errors.New("error parseing tx bytes into TX")
-	// ErrExecuteUTXO
-	ErrExecuteUTXO = errors.New("execute UTXO error")
 	// ErrMustCoinbase
 	ErrMustCoinbase = errors.New("tx must be coinbase")
+	// ErrCantCoinbase
+	ErrCantCoinbase = errors.New("tx must not be coinbase")
+	// ErrTxInOutNotBalance returned when txouts + fee != txins
+	ErrTxInOutNotBalance = errors.New("tx in & out not balance")
+	// ErrTxOutNotLogic
+	ErrTxOutNotLogic = errors.New("tx out isn't logic")
 )

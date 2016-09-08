@@ -47,7 +47,7 @@ func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, a
 		return nil, err
 	}
 
-	logger.Debug("deploy Lepuscoin successfully")
+	logger.Info("deploy Lepuscoin successfully")
 	return nil, nil
 }
 

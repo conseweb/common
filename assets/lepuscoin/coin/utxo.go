@@ -57,7 +57,7 @@ func (u *UTXO) Execute(tx *pb.TX) (*pb.ExecResult, error) {
 
 	// Loop through outputs first
 	for index, output := range newTx.Txout {
-		currKey := &Key{TxHashAsHex: hex.EncodeToString(txhash[:]), TxIndex: uint32(index)}
+		currKey := &Key{TxHashAsHex: hex.EncodeToString(txhash), TxIndex: uint32(index)}
 		_, ok, err := u.Store.GetTxOut(currKey)
 		if err != nil {
 			return nil, fmt.Errorf("Error getting state from stores: %s", err)
@@ -68,7 +68,11 @@ func (u *UTXO) Execute(tx *pb.TX) (*pb.ExecResult, error) {
 		}
 
 		// Store the output in utxo
-		u.Store.PutTxOut(currKey, output)
+		if err := u.Store.PutTxOut(currKey, output); err != nil {
+			return nil, err
+		}
+
+		logger.Debugf("put tx output %s:%v", currKey.String(), output)
 		execResult.SumCurrentOutputs += output.Value
 	}
 
@@ -82,24 +86,25 @@ func (u *UTXO) Execute(tx *pb.TX) (*pb.ExecResult, error) {
 			logger.Debugf("input[%+v] is coinbase!", input)
 		} else {
 			keyToPrevOutput := &Key{TxHashAsHex: hex.EncodeToString(prevTxHash), TxIndex: prevOutputIx}
-			value, ok, err := u.Store.GetTxOut(keyToPrevOutput)
+			value, err := u.QueryTxOut(keyToPrevOutput.String())
 			if err != nil {
-				return nil, fmt.Errorf("Error getting state form store: %v", err)
-			}
-
-			if !ok {
-				// Previous output not found
-				return nil, fmt.Errorf("Could not find previous transaction output with key = %v", keyToPrevOutput)
+				return nil, fmt.Errorf("Could not find previous transaction output with key = %v, err: %v", keyToPrevOutput, err)
 			}
 
 			// verify script
 
 			// verified, now remove prior outputs
-			u.Store.DelTxOut(keyToPrevOutput)
+			if err := u.Store.DelTxOut(keyToPrevOutput); err != nil {
+				return nil, err
+			}
+			logger.Debugf("delete previous tx out: %s", keyToPrevOutput)
 			execResult.SumPriorOutputs += value.Value
 		}
 
-		u.Store.PutTx(newTx)
+		if err := u.Store.PutTx(newTx); err != nil {
+			return nil, err
+		}
+		logger.Debug("put tx into db")
 	}
 
 	return execResult, nil

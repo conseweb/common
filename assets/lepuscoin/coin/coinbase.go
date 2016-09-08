@@ -25,8 +25,6 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 		return nil, ErrInvalidArgs
 	}
 
-	// utxo
-	utxo := MakeUTXO(store)
 	txDataBase64 := args[0]
 	txData, err := base64.StdEncoding.DecodeString(txDataBase64)
 	if err != nil {
@@ -40,6 +38,8 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 		return nil, err
 	}
 
+	// utxo
+	utxo := MakeUTXO(store)
 	execResult, err := utxo.Execute(tx)
 	if err != nil {
 		logger.Errorf("execute coinbase tx return error: %v", err)
@@ -57,5 +57,6 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 		return nil, err
 	}
 
+	logger.Debugf("coinbase execute result: %+v", execResult)
 	return execResult.Bytes()
 }
