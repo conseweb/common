@@ -156,7 +156,6 @@ func (s *ChaincodeStore) PutTx(tx *pb.TX) error {
 func (s *ChaincodeStore) GetCoinbase() uint64 {
 	data, err := s.stub.GetState(coinbase)
 	if err != nil || data == nil || len(data) == 0 {
-		logger.Errorf("Error getting state[%v] %v", coinbase, err)
 		return 0
 	}
 

@@ -37,15 +37,20 @@ func (coin *Lepuscoin) queryAddr(store Store, args []string) ([]byte, error) {
 	}
 	queryResult.Account = a
 
-	// utxo
-	utxo := MakeUTXO(store)
-	out, err := utxo.QueryTxOut(a.TxoutKey)
-	if err != nil {
-		logger.Errorf("query tx out error: %v", err)
-		return nil, err
-	}
-	queryResult.Txout = out
+	logger.Debugf("query addr combind account: %v", a)
 
+	if a.TxoutKey != "" {
+		// utxo
+		utxo := MakeUTXO(store)
+		out, err := utxo.QueryTxOut(a.TxoutKey)
+		if err != nil {
+			logger.Errorf("query tx out error: %v", err)
+			return nil, err
+		}
+		queryResult.Txout = out
+	}
+
+	logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
 	return queryResult.Bytes()
 }
 
@@ -68,13 +73,16 @@ func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {
 			return nil, err
 		}
 		queryResult.Account = a
+		logger.Debugf("query addr[%s] account: %v", addr, a)
 
-		out, err := utxo.QueryTxOut(a.TxoutKey)
-		if err != nil {
-			logger.Errorf("query tx out error: %v", err)
-			return nil, err
+		if a.TxoutKey != "" {
+			out, err := utxo.QueryTxOut(a.TxoutKey)
+			if err != nil {
+				logger.Errorf("query tx out error: %v", err)
+				return nil, err
+			}
+			queryResult.Txout = out
 		}
-		queryResult.Txout = out
 
 		results.Results = append(results.Results, queryResult)
 	}
@@ -107,5 +115,6 @@ func (coin *Lepuscoin) queryCoin(store Store, args []string) ([]byte, error) {
 	info := new(pb.LepuscoinInfo)
 	info.CoinTotal = store.GetCoinbase()
 
+	logger.Debugf("query lepuscoin info: %+v", info)
 	return proto.Marshal(info)
 }

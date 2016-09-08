@@ -52,7 +52,8 @@ func (a *Account) Coinbase(tx *pb.TX) error {
 		// add account
 		account, err := a.store.GetAccount(txout.Addr)
 		if err != nil {
-			return err
+			logger.Warningf("Can't get account, creating one...")
+			account = new(pb.Account)
 		}
 
 		account.Balance += txout.Value
@@ -101,14 +102,14 @@ func (a *Account) Transfer(tx *pb.TX) error {
 
 	txHash := tx.TxHash()
 	for idx, to := range tx.Txout {
-		_, err := a.store.GetAccount(to.Addr)
+		account, err := a.store.GetAccount(to.Addr)
 		if err != nil {
 			logger.Warningf("get account doesnt exist, creating one...")
+			account = new(pb.Account)
+			account.Addr = to.Addr
 		}
 
 		outKey := &Key{TxHashAsHex: hex.EncodeToString(txHash), TxIndex: uint32(idx)}
-		account := new(pb.Account)
-		account.Addr = to.Addr
 		account.Balance = to.Value
 		account.TxoutKey = outKey.String()
 
