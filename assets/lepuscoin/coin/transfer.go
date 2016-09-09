@@ -18,9 +18,9 @@ package coin
 import (
 	"encoding/base64"
 	"math"
+	"time"
 
 	pb "github.com/conseweb/common/protos"
-	"time"
 )
 
 // 1. 转账是不会产生新货币的
@@ -132,6 +132,12 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 		}
 
 		execResult.SumCurrentOutputs += to.Value
+		logger.Errorf("execute tx transfer return error: %v", err)
+		return nil, err
+	}
+
+	if execResult.IsCoinbase {
+		return nil, ErrCantCoinbase
 	}
 
 	// current outputs must less than prior outputs
@@ -156,6 +162,11 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 	// save coin stat
 	if err := store.PutCoinInfo(coinInfo); err != nil {
 		return nil, err
+	}
+
+	// one of transfer main point is in == out, no coin mined, no coin lose
+	if execResult.SumCurrentOutputs != execResult.SumPriorOutputs {
+		return nil, ErrTxInOutNotBalance
 	}
 
 	return execResult.Bytes()

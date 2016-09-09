@@ -54,7 +54,6 @@ func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {
 		queryResult.Account = account
 
 		results.Results = append(results.Results, queryResult)
-
 		logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
 	}
 

@@ -39,7 +39,6 @@ start docker
 ```
 docker-compose up
 ```
-
 build lepuscoin and run locally
 ```
 CORE_CHAINCODE_ID_NAME=lepuscoin CORE_PEER_ADDRESS=0.0.0.0:7051 ./lepuscoin
@@ -90,7 +89,7 @@ REST
         "ctorMsg": {
             "function": "invoke_coinbase",
             "args": [
-                "CAEQiPrJvgUaBgj/////DyInCOgHEiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40MAE="
+            "CAEQiPrJvgUaBgj/////DyInCOgHEiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40MAE="
             ]
         },
         "secureContext": ""
@@ -117,7 +116,7 @@ REST
         "ctorMsg": {
             "function": "invoke_transfer",
             "args": [
-                "CAEQiPrJvgUaQhJAY2M1ZjE5YTMwMTc4MjI1YTRjNjA2MTExZWQwMmYyMDBmN2IxODQ0ZWIwNzY2MDJhZDNkODUzYjIyOTRiYTFjOSIOCKAGEgkxMjM0NTY3ODkiJwjIARIiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONCoiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONA=="
+            "CAEQiPrJvgUaQhJAY2M1ZjE5YTMwMTc4MjI1YTRjNjA2MTExZWQwMmYyMDBmN2IxODQ0ZWIwNzY2MDJhZDNkODUzYjIyOTRiYTFjOSIOCKAGEgkxMjM0NTY3ODkiJwjIARIiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONCoiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONA=="
             ]
         },
         "secureContext": ""

@@ -17,12 +17,13 @@ package coin
 
 import (
 	"encoding/base64"
-	pb "github.com/conseweb/common/protos"
 	"math"
+
+	pb "github.com/conseweb/common/protos"
 )
 
 func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
-	if len(args) != 1 || args[0] == ""{
+	if len(args) != 1 || args[0] == "" {
 		return nil, ErrInvalidArgs
 	}
 

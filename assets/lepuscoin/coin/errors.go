@@ -45,5 +45,4 @@ var (
 	// ErrAccountNotEnoughBalance
 	ErrAccountNotEnoughBalance = errors.New("account has not enough balance")
 	// ErrTxOutLock
-	ErrTxOutLock = errors.New("tx out can be spend only after until time")
-)
+	ErrTxOutLock = errors.New("tx out can be spend only after until time"))
