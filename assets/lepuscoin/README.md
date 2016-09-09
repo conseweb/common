@@ -39,7 +39,6 @@ start docker
 ```
 docker-compose up
 ```
-
 build lepuscoin and run locally
 ```
 CORE_CHAINCODE_ID_NAME=lepuscoin CORE_PEER_ADDRESS=0.0.0.0:7051 ./lepuscoin
@@ -90,7 +89,7 @@ REST
         "ctorMsg": {
             "function": "invoke_coinbase",
             "args": [
-                "CAEaBgj/////DyInCOgHKiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40"
+            "CAEQiPrJvgUaBgj/////DyInCOgHEiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40MAE="
             ]
         },
         "secureContext": ""
@@ -100,7 +99,7 @@ REST
 ```
 CLI
 ```
-peer chaincode invoke -n lepuscoin -l golang -c '{"Function":"invoke_coinbase", "Args":["CAEaBgj/////DyInCOgHKiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40"]}'
+peer chaincode invoke -n lepuscoin -l golang -c '{"Function":"invoke_coinbase", "Args":["CAEQiPrJvgUaBgj/////DyInCOgHEiIxNENXU0U4NjlpbkEzWGZ5Y29IOW1GaHl6Qmt3OVg2Yk40MAE="]}'
 ```
 
 #### invoke_transfer
@@ -117,7 +116,7 @@ REST
         "ctorMsg": {
             "function": "invoke_transfer",
             "args": [
-                "CAEaIhIgL3zN6fWV7PrfjM2Ykd+5YZ8pv16vGL/9rVn1a9i00zkiDgjoByoJMTIzNDU2Nzg5"
+            "CAEQiPrJvgUaQhJAY2M1ZjE5YTMwMTc4MjI1YTRjNjA2MTExZWQwMmYyMDBmN2IxODQ0ZWIwNzY2MDJhZDNkODUzYjIyOTRiYTFjOSIOCKAGEgkxMjM0NTY3ODkiJwjIARIiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONCoiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONA=="
             ]
         },
         "secureContext": ""
@@ -127,7 +126,7 @@ REST
 ```
 CLI
 ```
-peer chaincode invoke -n lepuscoin -l golang -c '{"Function":"invoke_transfer", "Args":["CAEaIhIgL3zN6fWV7PrfjM2Ykd+5YZ8pv16vGL/9rVn1a9i00zkiDgjoByoJMTIzNDU2Nzg5"]}'
+peer chaincode invoke -n lepuscoin -l golang -c '{"Function":"invoke_transfer", "Args":["CAEQiPrJvgUaQhJAY2M1ZjE5YTMwMTc4MjI1YTRjNjA2MTExZWQwMmYyMDBmN2IxODQ0ZWIwNzY2MDJhZDNkODUzYjIyOTRiYTFjOSIOCKAGEgkxMjM0NTY3ODkiJwjIARIiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONCoiMTRDV1NFODY5aW5BM1hmeWNvSDltRmh5ekJrdzlYNmJONA=="]}'
 ```
 ### query request
 #### query_addr
@@ -199,7 +198,25 @@ REST
         "ctorMsg": {
             "function": "query_tx",
             "args": [
-                "331afa7767528f875b19cc20c3715720e8ba08a4b61af9254a790a4149639045",
+                "cc5f19a30178225a4c606111ed02f200f7b1844eb076602ad3d853b2294ba1c9",
+            ]
+        },
+        "secureContext": ""
+    },
+    "id": 1
+}
+{
+    "jsonrpc": "2.0",
+    "method": "query",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "CHAINCODE_HASH_HERE"
+        },
+        "ctorMsg": {
+            "function": "query_tx",
+            "args": [
+                "7ea4cca868a52c2dcd45a1ada8f62e586106067eb081409d977ced4b76c292a4",
             ]
         },
         "secureContext": ""
@@ -209,7 +226,8 @@ REST
 ```
 CLI
 ```
-peer chaincode query -n lepuscoin -l golang -c '{"Function":"query_tx", "Args":["331afa7767528f875b19cc20c3715720e8ba08a4b61af9254a790a4149639045"]}'
+peer chaincode query -n lepuscoin -l golang -c '{"Function":"query_tx", "Args":["cc5f19a30178225a4c606111ed02f200f7b1844eb076602ad3d853b2294ba1c9"]}'
+peer chaincode query -n lepuscoin -l golang -c '{"Function":"query_tx", "Args":["7ea4cca868a52c2dcd45a1ada8f62e586106067eb081409d977ced4b76c292a4"]}'
 ```
 #### query_coin
 

@@ -16,8 +16,6 @@ limitations under the License.
 package coin
 
 import (
-	"bytes"
-	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -27,7 +25,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-const coinbase = "Lepuscoinbase"
+const coinInfoKey = "LepuscoinInfo"
 
 // Key represents the key for a transaction in storage. It has both a
 // hash and index
@@ -67,13 +65,11 @@ func generateAccountKey(addr string) string {
 // was created so either the state database store can be used or a in memory
 // store can be used for unit testing.
 type Store interface {
-	GetTxOut(*Key) (*pb.TX_TXOUT, bool, error)
-	PutTxOut(*Key, *pb.TX_TXOUT) error
-	DelTxOut(*Key) error
 	GetTx(string) (*pb.TX, bool, error)
 	PutTx(*pb.TX) error
-	GetCoinbase() uint64
-	AddCoinbase(uint64) error
+	InitCoinInfo() error
+	GetCoinInfo() (*pb.LepuscoinInfo, error)
+	PutCoinInfo(*pb.LepuscoinInfo) error
 	GetAccount(string) (*pb.Account, error)
 	PutAccount(*pb.Account) error
 }
@@ -88,40 +84,6 @@ func MakeChaincodeStore(stub shim.ChaincodeStubInterface) Store {
 	store := &ChaincodeStore{}
 	store.stub = stub
 	return store
-}
-
-// GetTxOut returns the transaction for a given key
-func (s *ChaincodeStore) GetTxOut(key *Key) (*pb.TX_TXOUT, bool, error) {
-	data, err := s.stub.GetState(key.String())
-	if err != nil {
-		return nil, false, fmt.Errorf("Error getting state from stub:  %s", err)
-	}
-	if data == nil || len(data) == 0 {
-		return nil, false, nil
-	}
-
-	// Value found, unmarshal
-	value := &pb.TX_TXOUT{}
-	if err := proto.Unmarshal(data, value); err != nil {
-		return nil, false, fmt.Errorf("Error unmarshalling value:  %s", err)
-	}
-
-	return value, true, nil
-}
-
-// DelTxOut deletes the transaction for the given key
-func (s *ChaincodeStore) DelTxOut(key *Key) error {
-	return s.stub.DelState(key.String())
-}
-
-// PutTxOut stores the given transaction and key
-func (s *ChaincodeStore) PutTxOut(key *Key, value *pb.TX_TXOUT) error {
-	data, err := proto.Marshal(value)
-	if err != nil {
-		return fmt.Errorf("Error marshalling value to bytes:  %s", err)
-	}
-
-	return s.stub.PutState(key.String(), data)
 }
 
 // GetTx returns a transaction for the given hash
@@ -149,31 +111,46 @@ func (s *ChaincodeStore) PutTx(tx *pb.TX) error {
 		return err
 	}
 
-	return s.stub.PutState(hex.EncodeToString(tx.TxHash()), txBytes)
+	return s.stub.PutState(tx.TxHash(), txBytes)
 }
 
-// GetCoinbase returns monetary supply, based on account model
-func (s *ChaincodeStore) GetCoinbase() uint64 {
-	data, err := s.stub.GetState(coinbase)
-	if err != nil || data == nil || len(data) == 0 {
-		return 0
+func (s *ChaincodeStore) InitCoinInfo() error {
+	coinInfo := &pb.LepuscoinInfo{
+		CoinTotal:    0,
+		AccountTotal: 0,
+		TxoutTotal:   0,
+		TxTotal:      0,
+		Placeholder:  "placeholder",
 	}
 
-	supply, err := strconv.ParseUint(bytes.NewBuffer(data).String(), 10, 64)
+	return s.PutCoinInfo(coinInfo)
+}
+
+func (s *ChaincodeStore) GetCoinInfo() (*pb.LepuscoinInfo, error) {
+	data, err := s.stub.GetState(coinInfoKey)
 	if err != nil {
-		logger.Errorf("strconv.ParseUint return error: %v", err)
-		return 0
+		return nil, err
 	}
 
-	return supply
+	if data == nil || len(data) == 0 {
+		return nil, ErrKeyNoData
+	}
+
+	coinfo, err := pb.ParseLepuscoinInfoBytes(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return coinfo, nil
 }
 
-// AddCoinbase add coinbase into monetary supply counter
-func (s *ChaincodeStore) AddCoinbase(add uint64) error {
-	supply := s.GetCoinbase() + add
+func (s *ChaincodeStore) PutCoinInfo(coinfo *pb.LepuscoinInfo) error {
+	coinBytes, err := coinfo.Bytes()
+	if err != nil {
+		return err
+	}
 
-	if err := s.stub.PutState(coinbase, bytes.NewBufferString(strconv.FormatUint(supply, 10)).Bytes()); err != nil {
-		logger.Errorf("Error setting state[%s] %v", coinbase, err)
+	if err := s.stub.PutState(coinInfoKey, coinBytes); err != nil {
 		return err
 	}
 
@@ -210,83 +187,4 @@ func (s *ChaincodeStore) PutAccount(account *pb.Account) error {
 	}
 
 	return s.stub.PutState(key, aBytes)
-}
-
-// InMemoryStore used for unit testing
-type InMemoryStore struct {
-	Map        map[*Key]*pb.TX_TXOUT
-	TranMap    map[string]*pb.TX
-	Accounts   map[string]*pb.Account
-	coinsupply uint64
-}
-
-// MakeInMemoryStore creates a new in memory store
-func MakeInMemoryStore() Store {
-	ims := &InMemoryStore{}
-	ims.Map = make(map[*Key]*pb.TX_TXOUT)
-	ims.TranMap = make(map[string]*pb.TX)
-	return ims
-}
-
-// GetTxOut returns the transaction for the given key
-func (ims *InMemoryStore) GetTxOut(key *Key) (*pb.TX_TXOUT, bool, error) {
-	value, ok := ims.Map[key]
-	return value, ok, nil
-}
-
-// DelTxOut deletes the given key and corresponding transactions
-func (ims *InMemoryStore) DelTxOut(key *Key) error {
-	delete(ims.Map, key)
-	return nil
-}
-
-// PutTxOut saves the key and transaction in memory
-func (ims *InMemoryStore) PutTxOut(key *Key, value *pb.TX_TXOUT) error {
-	ims.Map[key] = value
-	return nil
-}
-
-// GetTx returns the transaction for the given hash
-func (ims *InMemoryStore) GetTx(key string) (*pb.TX, bool, error) {
-	value, ok := ims.TranMap[key]
-	return value, ok, nil
-}
-
-// PutTx saves the hash and transaction in memory
-func (ims *InMemoryStore) PutTx(value *pb.TX) error {
-	ims.TranMap[hex.EncodeToString(value.TxHash())] = value
-	return nil
-}
-
-// GetCoinbase returns monetary supply, based on account model
-func (s *InMemoryStore) GetCoinbase() uint64 {
-	return s.coinsupply
-}
-
-// AddCoinbase add coinbase into monetary supply counter
-func (s *InMemoryStore) AddCoinbase(add uint64) error {
-	supply := s.GetCoinbase() + add
-	s.coinsupply = supply
-
-	return nil
-}
-
-// GetAccount returns account from world states
-func (s *InMemoryStore) GetAccount(addr string) (*pb.Account, error) {
-	key := generateAccountKey(addr)
-	account, ok := s.Accounts[key]
-	if !ok {
-		return nil, fmt.Errorf("account not found")
-	}
-
-	return account, nil
-}
-
-// PutAccount update or insert account into world states
-func (s *InMemoryStore) PutAccount(account *pb.Account) error {
-	key := generateAccountKey(account.Addr)
-
-	s.Accounts[key] = account
-
-	return nil
 }

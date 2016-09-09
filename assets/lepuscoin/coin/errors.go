@@ -30,6 +30,19 @@ var (
 	ErrCantCoinbase = errors.New("tx must not be coinbase")
 	// ErrTxInOutNotBalance returned when txouts + fee != txins
 	ErrTxInOutNotBalance = errors.New("tx in & out not balance")
-	// ErrTxOutNotLogic
-	ErrTxOutNotLogic = errors.New("tx out isn't logic")
-)
+	// ErrTxOutMoreThanTxIn
+	ErrTxOutMoreThanTxIn = errors.New("tx out more than tx in")
+	// ErrKeyNoData
+	ErrKeyNoData = errors.New("state key found, but no data")
+	// ErrInvalidLepuscoinTX
+	ErrInvalidLepuscoinTX = errors.New("Lepuscoin transaction invalid")
+	// ErrCollisionTxOut
+	ErrCollisionTxOut = errors.New("account has collision tx out")
+	// ErrTxNoFounder
+	ErrTxNoFounder = errors.New("tx has no founder")
+	// ErrAccountNoTxOut
+	ErrAccountNoTxOut = errors.New("account has no such tx out")
+	// ErrAccountNotEnoughBalance
+	ErrAccountNotEnoughBalance = errors.New("account has not enough balance")
+	// ErrTxOutLock
+	ErrTxOutLock = errors.New("tx out can be spend only after until time"))

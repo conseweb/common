@@ -15,23 +15,30 @@ var _ = math.Inf
 
 // account model digitalAssets
 type Account struct {
-	Addr     string `protobuf:"bytes,1,opt,name=addr" json:"addr,omitempty"`
-	Balance  uint64 `protobuf:"varint,2,opt,name=balance" json:"balance,omitempty"`
-	TxoutKey string `protobuf:"bytes,3,opt,name=txoutKey" json:"txoutKey,omitempty"`
+	Addr    string               `protobuf:"bytes,1,opt,name=addr" json:"addr,omitempty"`
+	Balance uint64               `protobuf:"varint,2,opt,name=balance" json:"balance,omitempty"`
+	Txouts  map[string]*TX_TXOUT `protobuf:"bytes,3,rep,name=txouts" json:"txouts,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
 func (m *Account) Reset()         { *m = Account{} }
 func (m *Account) String() string { return proto.CompactTextString(m) }
 func (*Account) ProtoMessage()    {}
 
+func (m *Account) GetTxouts() map[string]*TX_TXOUT {
+	if m != nil {
+		return m.Txouts
+	}
+	return nil
+}
+
 // utxo tx
 type TX struct {
-	Version  uint64      `protobuf:"varint,1,opt,name=version" json:"version,omitempty"`
-	LockTime int64       `protobuf:"varint,2,opt,name=lockTime" json:"lockTime,omitempty"`
-	Txin     []*TX_TXIN  `protobuf:"bytes,3,rep,name=txin" json:"txin,omitempty"`
-	Txout    []*TX_TXOUT `protobuf:"bytes,4,rep,name=txout" json:"txout,omitempty"`
-	Blocks   [][]byte    `protobuf:"bytes,5,rep,name=blocks,proto3" json:"blocks,omitempty"`
-	Fee      uint64      `protobuf:"varint,6,opt,name=fee" json:"fee,omitempty"`
+	Version   uint64      `protobuf:"varint,1,opt,name=version" json:"version,omitempty"`
+	Timestamp int64       `protobuf:"varint,2,opt,name=timestamp" json:"timestamp,omitempty"`
+	Txin      []*TX_TXIN  `protobuf:"bytes,3,rep,name=txin" json:"txin,omitempty"`
+	Txout     []*TX_TXOUT `protobuf:"bytes,4,rep,name=txout" json:"txout,omitempty"`
+	Founder   string      `protobuf:"bytes,5,opt,name=founder" json:"founder,omitempty"`
+	Coinbase  bool        `protobuf:"varint,6,opt,name=coinbase" json:"coinbase,omitempty"`
 }
 
 func (m *TX) Reset()         { *m = TX{} }
@@ -52,11 +59,10 @@ func (m *TX) GetTxout() []*TX_TXOUT {
 	return nil
 }
 
+// txin not specified who has this txin, because creator can use their txout only, txin must be creator's previous txout
 type TX_TXIN struct {
 	Ix         uint32 `protobuf:"varint,1,opt,name=ix" json:"ix,omitempty"`
-	SourceHash []byte `protobuf:"bytes,2,opt,name=sourceHash,proto3" json:"sourceHash,omitempty"`
-	Script     []byte `protobuf:"bytes,3,opt,name=script,proto3" json:"script,omitempty"`
-	Sequence   uint32 `protobuf:"varint,4,opt,name=sequence" json:"sequence,omitempty"`
+	SourceHash string `protobuf:"bytes,2,opt,name=sourceHash" json:"sourceHash,omitempty"`
 }
 
 func (m *TX_TXIN) Reset()         { *m = TX_TXIN{} }
@@ -64,11 +70,9 @@ func (m *TX_TXIN) String() string { return proto.CompactTextString(m) }
 func (*TX_TXIN) ProtoMessage()    {}
 
 type TX_TXOUT struct {
-	Value    uint64 `protobuf:"varint,1,opt,name=value" json:"value,omitempty"`
-	Script   []byte `protobuf:"bytes,2,opt,name=script,proto3" json:"script,omitempty"`
-	Color    []byte `protobuf:"bytes,3,opt,name=color,proto3" json:"color,omitempty"`
-	Quantity uint64 `protobuf:"varint,4,opt,name=quantity" json:"quantity,omitempty"`
-	Addr     string `protobuf:"bytes,5,opt,name=addr" json:"addr,omitempty"`
+	Value uint64 `protobuf:"varint,1,opt,name=value" json:"value,omitempty"`
+	Addr  string `protobuf:"bytes,2,opt,name=addr" json:"addr,omitempty"`
+	Until int64  `protobuf:"varint,3,opt,name=until" json:"until,omitempty"`
 }
 
 func (m *TX_TXOUT) Reset()         { *m = TX_TXOUT{} }
@@ -88,8 +92,7 @@ func (*ExecResult) ProtoMessage()    {}
 
 // QueryAddrResult is the result of query function query_addr
 type QueryAddrResult struct {
-	Account *Account  `protobuf:"bytes,1,opt,name=account" json:"account,omitempty"`
-	Txout   *TX_TXOUT `protobuf:"bytes,2,opt,name=txout" json:"txout,omitempty"`
+	Account *Account `protobuf:"bytes,1,opt,name=account" json:"account,omitempty"`
 }
 
 func (m *QueryAddrResult) Reset()         { *m = QueryAddrResult{} }
@@ -99,13 +102,6 @@ func (*QueryAddrResult) ProtoMessage()    {}
 func (m *QueryAddrResult) GetAccount() *Account {
 	if m != nil {
 		return m.Account
-	}
-	return nil
-}
-
-func (m *QueryAddrResult) GetTxout() *TX_TXOUT {
-	if m != nil {
-		return m.Txout
 	}
 	return nil
 }
@@ -128,7 +124,11 @@ func (m *QueryAddrResults) GetResults() []*QueryAddrResult {
 
 // LepuscoinInfo
 type LepuscoinInfo struct {
-	CoinTotal uint64 `protobuf:"varint,1,opt,name=coinTotal" json:"coinTotal,omitempty"`
+	CoinTotal    uint64 `protobuf:"varint,1,opt,name=coinTotal" json:"coinTotal,omitempty"`
+	AccountTotal uint64 `protobuf:"varint,2,opt,name=accountTotal" json:"accountTotal,omitempty"`
+	TxoutTotal   uint64 `protobuf:"varint,3,opt,name=txoutTotal" json:"txoutTotal,omitempty"`
+	TxTotal      uint64 `protobuf:"varint,4,opt,name=txTotal" json:"txTotal,omitempty"`
+	Placeholder  string `protobuf:"bytes,5,opt,name=placeholder" json:"placeholder,omitempty"`
 }
 
 func (m *LepuscoinInfo) Reset()         { *m = LepuscoinInfo{} }

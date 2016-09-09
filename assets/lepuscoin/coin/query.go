@@ -21,34 +21,18 @@ import (
 )
 
 func (coin *Lepuscoin) queryAddr(store Store, args []string) ([]byte, error) {
-	if len(args) != 1 {
+	if len(args) != 1 || args[0] == "" {
 		return nil, ErrInvalidArgs
 	}
 
 	addr := args[0]
 	queryResult := new(pb.QueryAddrResult)
 
-	// account model
-	account := MakeAccount(store)
-	a, err := account.QueryAccountByAddr(addr)
+	account, err := store.GetAccount(addr)
 	if err != nil {
-		logger.Errorf("query account by addr error: %v", err)
 		return nil, err
 	}
-	queryResult.Account = a
-
-	logger.Debugf("query addr combind account: %v", a)
-
-	if a.TxoutKey != "" {
-		// utxo
-		utxo := MakeUTXO(store)
-		out, err := utxo.QueryTxOut(a.TxoutKey)
-		if err != nil {
-			logger.Errorf("query tx out error: %v", err)
-			return nil, err
-		}
-		queryResult.Txout = out
-	}
+	queryResult.Account = account
 
 	logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
 	return queryResult.Bytes()
@@ -59,51 +43,35 @@ func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {
 		Results: make([]*pb.QueryAddrResult, 0),
 	}
 
-	// account model
-	account := MakeAccount(store)
-	// utxo
-	utxo := MakeUTXO(store)
 	for _, arg := range args {
 		addr := arg
 		queryResult := new(pb.QueryAddrResult)
 
-		a, err := account.QueryAccountByAddr(addr)
+		account, err := store.GetAccount(addr)
 		if err != nil {
-			logger.Errorf("query account by addr error: %v", err)
 			return nil, err
 		}
-		queryResult.Account = a
-		logger.Debugf("query addr[%s] account: %v", addr, a)
-
-		if a.TxoutKey != "" {
-			out, err := utxo.QueryTxOut(a.TxoutKey)
-			if err != nil {
-				logger.Errorf("query tx out error: %v", err)
-				return nil, err
-			}
-			queryResult.Txout = out
-		}
+		queryResult.Account = account
 
 		results.Results = append(results.Results, queryResult)
+		logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
 	}
 
 	return proto.Marshal(results)
 }
 
 func (coin *Lepuscoin) queryTx(store Store, args []string) ([]byte, error) {
-	if len(args) != 1 {
+	if len(args) != 1 || args[0] == "" {
 		return nil, ErrInvalidArgs
 	}
 
-	// utxo
-	utxo := MakeUTXO(store)
-	tx, err := utxo.QueryTx(args[0])
+	tx, _, err := store.GetTx(args[0])
 	if err != nil {
-		logger.Errorf("utxo query tx return error: %v", err)
+		logger.Errorf("get tx info error: %v", err)
 		return nil, err
 	}
-
 	logger.Debugf("query tx: %+v", tx)
+
 	return tx.Bytes()
 }
 
@@ -112,9 +80,12 @@ func (coin *Lepuscoin) queryCoin(store Store, args []string) ([]byte, error) {
 		return nil, ErrInvalidArgs
 	}
 
-	info := new(pb.LepuscoinInfo)
-	info.CoinTotal = store.GetCoinbase()
+	coinInfo, err := store.GetCoinInfo()
+	if err != nil {
+		logger.Errorf("Error get coin info: %v", err)
+		return nil, err
+	}
 
-	logger.Debugf("query lepuscoin info: %+v", info)
-	return proto.Marshal(info)
+	logger.Debugf("query lepuscoin info: %+v", coinInfo)
+	return proto.Marshal(coinInfo)
 }

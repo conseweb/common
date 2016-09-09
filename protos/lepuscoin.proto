@@ -22,33 +22,30 @@ package protos;
 message Account {
     string addr = 1;
     uint64 balance = 2;
-    string txoutKey = 3;
+    map<string, TX.TXOUT> txouts = 3;
 }
 
 // utxo tx
 message TX {
     uint64 version = 1;
-    int64 lockTime = 2;
+    int64 timestamp = 2;
+    // txin not specified who has this txin, because creator can use their txout only, txin must be creator's previous txout
     message TXIN {
         uint32 ix = 1;
-        bytes sourceHash = 2;
-        bytes script = 3;
-        uint32 sequence = 4;
+        string sourceHash = 2;
     }
     repeated TXIN txin = 3;
 
     message TXOUT {
         uint64 value = 1;
-        bytes script = 2;
-        bytes color = 3;
-        uint64 quantity = 4;
-        string addr = 5; // who will receive this txout
+        string addr = 2; // who will receive this txout
+        int64 until = 3; // until xx timestamp, any one cant spend the txout
     }
     repeated TXOUT txout = 4;
-    repeated bytes blocks = 5;
-    uint64 fee = 6;
-}
 
+    string founder = 5; // who created this tx
+    bool coinbase = 6;
+}
 
 // ExecResult is the result of processing a transaction
 message ExecResult {
@@ -60,7 +57,6 @@ message ExecResult {
 // QueryAddrResult is the result of query function query_addr
 message QueryAddrResult {
     Account account = 1;
-    TX.TXOUT txout = 2;
 }
 
 // QueryAddrResults
@@ -71,4 +67,8 @@ message QueryAddrResults {
 // LepuscoinInfo
 message LepuscoinInfo {
     uint64 coinTotal = 1;
+    uint64 accountTotal = 2;
+    uint64 txoutTotal = 3;
+    uint64 txTotal = 4;
+    string placeholder = 5;
 }

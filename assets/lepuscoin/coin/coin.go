@@ -43,7 +43,7 @@ func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, a
 	store := MakeChaincodeStore(stub)
 
 	// deploy lepuscoin chaincode only need to set coin counter
-	if err := store.AddCoinbase(0); err != nil {
+	if err := store.InitCoinInfo(); err != nil {
 		return nil, err
 	}
 
