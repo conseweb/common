@@ -132,8 +132,6 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 		}
 
 		execResult.SumCurrentOutputs += to.Value
-		logger.Errorf("execute tx transfer return error: %v", err)
-		return nil, err
 	}
 
 	if execResult.IsCoinbase {
