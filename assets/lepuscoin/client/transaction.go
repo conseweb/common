@@ -16,8 +16,10 @@ limitations under the License.
 package client
 
 import (
-	pb "github.com/conseweb/common/protos"
+	"errors"
 	"time"
+
+	pb "github.com/conseweb/common/protos"
 )
 
 // NewTransaction
@@ -54,4 +56,28 @@ func NewTxOut(value uint64, addr string, until int64) *pb.TX_TXOUT {
 		Addr:  addr,
 		Until: until,
 	}
+}
+
+// VerifyTx verify tx is valid or not
+// If not, error returned
+func VerifyTx(tx *pb.TX) error {
+	// time check
+	if time.Now().UTC().Before(time.Unix(tx.Timestamp, 0).UTC()) {
+		return errors.New("tx occur time after now, invalid")
+	}
+
+	// coinbase check
+	if tx.Founder != "" && tx.Coinbase {
+		return errors.New("not coinbase transaction")
+	}
+
+	if tx.Txout == nil || len(tx.Txout) == 0 {
+		return errors.New("transaction output is empty")
+	}
+
+	if !tx.Coinbase && (tx.Txin == nil || len(tx.Txin) == 0) {
+		return errors.New("transaction input is empty")
+	}
+
+	return nil
 }
