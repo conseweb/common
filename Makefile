@@ -1,6 +1,6 @@
 #PWD := $(shell pwd)
 PWD := /Users/mint/develop/gopath/src
-IMAGE := mintdev:latest
+IMAGE := ckeyer/obc:dev
 INNER_GOPATH := /opt/gopath
 dev:
 	docker run --rm \
@@ -9,4 +9,4 @@ dev:
 	 -v $(PWD):$(INNER_GOPATH)/src \
 	 -w $(INNER_GOPATH)/src \
 	 -v /var/run/docker.sock:/var/run/docker.sock \
-	 -it $(IMAGE) zsh
+	 -it $(IMAGE) bash
