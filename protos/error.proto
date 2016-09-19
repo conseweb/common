@@ -48,8 +48,12 @@ enum ErrorType {
     INVALID_SIGNATURE = 12;
     // not in lottery interval
     NOT_IN_LOTTERY_INTERVAL = 13;
+    // in lottery interval
+    IN_LOTTERY_INTERVAL = 14;
     // already lottery
-    ALREADY_RECEIVED_LOTTERY = 14;
+    ALREADY_RECEIVED_LOTTERY = 15;
+    // inappropriate device role
+    INAPPROPRIATE_DEVICE_ROLE = 16;
 }
 
 message Error {
