@@ -40,7 +40,7 @@ type HDWallet struct {
 	key         []byte //33 bytes
 }
 
-func NewHDWallet(pass string, lang protos.PassphraseLanguage) (ph, *HDWallet) {
+func NewHDWallet(pass string, lang protos.PassphraseLanguage) (string, *HDWallet) {
 	ph, _ := passphrase.Passphrase(256, lang)
 	seed := passphrase.NewSeed(ph, pass)
 	return ph, MasterKey(seed)
