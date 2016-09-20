@@ -30,13 +30,13 @@ const defaultTimeout = time.Second * 3
 
 var (
 	once   = &sync.Once{}
-	logger = logging.MustGetLogger("cli")
+	logger = logging.MustGetLogger("clientconn")
 )
 
 // NewClientConnectionWithAddress Returns a new grpc.ClientConn to the given address.
 func NewClientConnectionWithAddress(address string, block bool, tslEnabled bool, creds credentials.TransportCredentials) (*grpc.ClientConn, error) {
 	once.Do(func() {
-		flogging.LoggingInit("cli")
+		flogging.LoggingInit("clientconn")
 	})
 
 	var opts []grpc.DialOption
