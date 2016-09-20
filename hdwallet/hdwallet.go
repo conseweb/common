@@ -7,8 +7,11 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
-	"github.com/btcsuite/btcutil/base58"
 	"math/big"
+
+	"github.com/btcsuite/btcutil/base58"
+	"github.com/conseweb/common/passphrase"
+	"github.com/conseweb/common/protos"
 )
 
 var (
@@ -35,6 +38,12 @@ type HDWallet struct {
 	childnumber []byte //4 bytes
 	chaincode   []byte //32 bytes
 	key         []byte //33 bytes
+}
+
+func NewHDWallet(pass string, lang protos.PassphraseLanguage) (ph, *HDWallet) {
+	ph, _ := passphrase.Passphrase(256, lang)
+	seed := passphrase.NewSeed(ph, pass)
+	return ph, MasterKey(seed)
 }
 
 // Child returns the ith child of wallet w. Values of i >= 2^31
