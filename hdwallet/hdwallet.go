@@ -3,7 +3,6 @@ package hdwallet
 import (
 	"bytes"
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha512"
 	"encoding/hex"
 	"errors"
