@@ -25,6 +25,7 @@ import (
 	"github.com/hyperledger/fabric/flogging"
 	"github.com/op/go-logging"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var (
@@ -137,4 +138,23 @@ func LivenessMembers() []*memberlist.Node {
 	msCopy := make([]*memberlist.Node, len(ms))
 	copy(msCopy, ms)
 	return msCopy
+}
+
+// LivenessRoleMembers returns a list of live nodes which represent a specified role
+func LivenessRoleMembers(role string) []*memberlist.Node {
+	roleNodes := make([]*memberlist.Node, 0)
+	for _, node := range LivenessMembers() {
+		if LivenessNodeRole(node) != role {
+			continue
+		}
+
+		roleNodes = append(roleNodes, node)
+	}
+
+	return roleNodes
+}
+
+// LivenessNodeRole returns node's role
+func LivenessNodeRole(node *memberlist.Node) string {
+	return strings.Split(node.Name, "_")[0]
 }
