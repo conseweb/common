@@ -19,13 +19,13 @@ package liveness
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/memberlist"
 	"github.com/hyperledger/fabric/flogging"
 	"github.com/op/go-logging"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var (
