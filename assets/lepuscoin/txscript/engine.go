@@ -9,7 +9,7 @@ import (
 	"math/big"
 
 	"github.com/btcsuite/btcd/btcec"
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
 // ScriptFlags is a bitmask defining additional operations or tests that will be

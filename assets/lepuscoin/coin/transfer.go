@@ -21,7 +21,7 @@ import (
 	"math"
 	"time"
 
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
 // 1. 转账是不会产生新货币的
