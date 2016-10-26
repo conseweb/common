@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )

@@ -13,7 +13,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/x509"
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
 // RawTxInSignature returns the serialized ECDSA signature for the input idx of

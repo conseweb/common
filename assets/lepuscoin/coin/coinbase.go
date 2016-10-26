@@ -20,7 +20,7 @@ import (
 	"encoding/base64"
 	"math"
 
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
 func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {

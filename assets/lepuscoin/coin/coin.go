@@ -18,6 +18,7 @@ package coin
 
 import (
 	"errors"
+	"github.com/hyperledger/fabric/flogging"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/op/go-logging"
@@ -27,15 +28,12 @@ var (
 	logger = logging.MustGetLogger("lepuscoin")
 )
 
-func init() {
-	logging.SetLevel(logging.DEBUG, "lepuscoin")
-}
-
 type Lepuscoin struct {
 }
 
 // Init deploy Lepuscoin into vp
 func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	flogging.LoggingInit("lepuscoin")
 	if function != "deploy" {
 		return nil, errors.New("invalid function name, 'deploy' only")
 	}

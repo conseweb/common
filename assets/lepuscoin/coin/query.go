@@ -17,7 +17,7 @@ limitations under the License.
 package coin
 
 import (
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/golang/protobuf/proto"
 )
 

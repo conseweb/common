@@ -9,9 +9,9 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"fmt"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/conseweb/common/assets/lepuscoin/txscript"
 	"github.com/conseweb/common/hdwallet"
-	pb "github.com/conseweb/common/protos"
 	"math"
 )
 

@@ -20,7 +20,7 @@ import (
 	"errors"
 	"time"
 
-	pb "github.com/conseweb/common/protos"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
 // NewTransaction

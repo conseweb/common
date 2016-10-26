@@ -19,10 +19,10 @@ package client
 import (
 	"bytes"
 	"errors"
+	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/conseweb/common/fabricGoSDK/client"
 	"github.com/conseweb/common/fabricGoSDK/client/chaincode"
 	"github.com/conseweb/common/fabricGoSDK/models"
-	pb "github.com/conseweb/common/protos"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/op/go-logging"
