@@ -73,7 +73,6 @@ func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface, function string,
 
 // Query function
 const (
-	QF_ADDR  = "query_addr"
 	QF_ADDRS = "query_addrs"
 	QF_TX    = "query_tx"
 	QF_COIN  = "query_coin"
@@ -85,8 +84,6 @@ func (coin *Lepuscoin) Query(stub shim.ChaincodeStubInterface, function string, 
 	store := MakeChaincodeStore(stub)
 
 	switch function {
-	case QF_ADDR:
-		return coin.queryAddr(store, args)
 	case QF_ADDRS:
 		return coin.queryAddrs(store, args)
 	case QF_TX:

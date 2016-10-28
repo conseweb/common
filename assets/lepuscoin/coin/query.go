@@ -21,41 +21,20 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-func (coin *Lepuscoin) queryAddr(store Store, args []string) ([]byte, error) {
-	if len(args) != 1 || args[0] == "" {
-		return nil, ErrInvalidArgs
-	}
-
-	addr := args[0]
-	queryResult := new(pb.QueryAddrResult)
-
-	account, err := store.GetAccount(addr)
-	if err != nil {
-		return nil, err
-	}
-	queryResult.Account = account
-
-	logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
-	return queryResult.Bytes()
-}
-
 func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {
 	results := &pb.QueryAddrResults{
-		Results: make([]*pb.QueryAddrResult, 0),
+		Accounts: make(map[string]*pb.Account),
 	}
 
-	for _, arg := range args {
-		addr := arg
-		queryResult := new(pb.QueryAddrResult)
-
+	for _, addr := range args {
 		account, err := store.GetAccount(addr)
 		if err != nil {
-			return nil, err
+			logger.Warningf("store.GetAccount return error: %v", err)
+			continue
 		}
-		queryResult.Account = account
+		results.Accounts[addr] = account
 
-		results.Results = append(results.Results, queryResult)
-		logger.Debugf("query addr[%s] result: %+v", addr, queryResult)
+		logger.Debugf("query addr[%s] account: %#v", addr, account)
 	}
 
 	return proto.Marshal(results)
