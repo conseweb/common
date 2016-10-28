@@ -18,9 +18,9 @@ package coin
 
 import (
 	"errors"
-	"github.com/hyperledger/fabric/flogging"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/hyperledger/fabric/flogging"
 	"github.com/op/go-logging"
 )
 
@@ -52,6 +52,7 @@ func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, a
 
 // Invoke function
 const (
+	IF_REGISTER string = "invoke_register"
 	IF_COINBASE string = "invoke_coinbase"
 	IF_TRANSFER string = "invoke_transfer"
 )
@@ -62,6 +63,8 @@ func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface, function string,
 	store := MakeChaincodeStore(stub)
 
 	switch function {
+	case IF_REGISTER:
+		return coin.registerAccount(store, args)
 	case IF_COINBASE:
 		return coin.coinbase(store, args)
 	case IF_TRANSFER:
