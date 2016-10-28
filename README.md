@@ -11,3 +11,10 @@ The common libraries used by Lepus.
 + snowflake: a distributed unique id generator inspired by Twitter's Snowflake
 + hdwallet: a wallet & address solution inspired by [Bitcoin bip-32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)
 + asserts/lepuscoin: digital coin, build on account model & sample UTXO model
+
+## fabric golang sdk
+
+### generate code
+```
+swagger generate client -f $GOPATH/src/github.com/hyperledger/fabric/core/rest/rest_api.json -A fabricGoSDK
+```
