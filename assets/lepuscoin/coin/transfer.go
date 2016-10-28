@@ -24,11 +24,6 @@ import (
 	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
 
-// 1. 转账是不会产生新货币的
-// 2. TODO 每个tx有fee,会发送给区块的生成者,但是怎么给他呢
-// 3. 在进行utxo执行前,应该先验证txin是否拥有足够的余额
-// 4. 需要验证输入和输出+fee是否一致
-
 func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 	if len(args) != 1 || args[0] == "" {
 		return nil, ErrInvalidArgs
@@ -161,11 +156,6 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 	// save coin stat
 	if err := store.PutCoinInfo(coinInfo); err != nil {
 		return nil, err
-	}
-
-	// one of transfer main point is in == out, no coin mined, no coin lose
-	if execResult.SumCurrentOutputs != execResult.SumPriorOutputs {
-		return nil, ErrTxInOutNotBalance
 	}
 
 	return execResult.Bytes()
