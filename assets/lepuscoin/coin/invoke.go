@@ -22,6 +22,12 @@ import (
 
 func (coin *Lepuscoin) registerAccount(store Store, args []string) ([]byte, error) {
 	addr := args[0]
+
+	if tmpaccount, err := store.GetAccount(addr); err == nil && tmpaccount != nil && tmpaccount.Addr == addr {
+		logger.Warningf("lepuscoin account(%s) already registered.", addr)
+		return nil, ErrAlreadyRegisterd
+	}
+
 	account := &pb.Account{
 		Addr:    addr,
 		Balance: 0,
