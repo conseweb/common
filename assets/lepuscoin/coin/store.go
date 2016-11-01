@@ -24,6 +24,7 @@ import (
 	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"errors"
 )
 
 const coinInfoKey = "LepuscoinInfo"
@@ -160,6 +161,9 @@ func (s *ChaincodeStore) PutCoinInfo(coinfo *pb.LepuscoinInfo) error {
 
 // GetAccount returns account from world states
 func (s *ChaincodeStore) GetAccount(addr string) (*pb.Account, error) {
+	if addr == "" {
+		return nil, errors.New("empty addr")
+	}
 	key := generateAccountKey(addr)
 	data, err := s.stub.GetState(key)
 	if err != nil {

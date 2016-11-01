@@ -18,7 +18,6 @@ package coin
 
 import (
 	"encoding/base64"
-	"math"
 
 	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 )
@@ -40,27 +39,26 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 		logger.Errorf("Unmarshal tx bytes error: %v\n", err)
 		return nil, err
 	}
-	if !tx.Coinbase {
+
+	// check tx whether is a coinbase tx
+	if len(tx.Txin) > 0 {
 		return nil, ErrMustCoinbase
 	}
 
 	txhash := tx.TxHash()
 	execResult := &pb.ExecResult{}
+
 	coinInfo, err := store.GetCoinInfo()
 	if err != nil {
 		logger.Errorf("Error get coin info: %v", err)
 		return nil, err
 	}
 
-	// Loop through outputs first
+	// Loop through outputs
 	for index, output := range tx.Txout {
 		if output.Addr == "" {
 			return nil, ErrInvalidLepuscoinTX
 		}
-
-		// change coin info
-		coinInfo.CoinTotal += output.Value
-		coinInfo.TxoutTotal += 1
 
 		outerAccount, err := store.GetAccount(output.Addr)
 		if err != nil {
@@ -84,21 +82,16 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 		// store tx out into account
 		outerAccount.Txouts[currKey.String()] = output
 		outerAccount.Balance += output.Value
-
 		if err := store.PutAccount(outerAccount); err != nil {
 			logger.Errorf("Error update account: %v, account info: %+v", err, outerAccount)
 			return nil, err
 		}
 		logger.Debugf("put tx output %s:%v", currKey.String(), output)
-		execResult.SumCurrentOutputs += output.Value
-	}
 
-	// Now loop over inputs
-	for _, input := range tx.Txin {
-		if math.MaxUint32 != input.Ix {
-			logger.Errorf("coinbase tx can not has other input")
-			return nil, ErrMustCoinbase
-		}
+		// coin stat
+		coinInfo.CoinTotal += output.Value
+		coinInfo.TxoutTotal += 1
+		execResult.SumCurrentOutputs += output.Value
 	}
 
 	if err := store.PutTx(tx); err != nil {
@@ -109,8 +102,6 @@ func (coin *Lepuscoin) coinbase(store Store, args []string) ([]byte, error) {
 
 	// tx total counter
 	coinInfo.TxTotal += 1
-
-	// save coin info counter
 	if err := store.PutCoinInfo(coinInfo); err != nil {
 		logger.Errorf("Error put coin info: %v", err)
 		return nil, err
