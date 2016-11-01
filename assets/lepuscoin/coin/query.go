@@ -17,6 +17,8 @@ limitations under the License.
 package coin
 
 import (
+	"encoding/json"
+
 	pb "github.com/conseweb/common/assets/lepuscoin/protos"
 	"github.com/golang/protobuf/proto"
 )
@@ -37,7 +39,7 @@ func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {
 		logger.Debugf("query addr[%s] account: %#v", addr, account)
 	}
 
-	return proto.Marshal(results)
+	return json.Marshal(results)
 }
 
 func (coin *Lepuscoin) queryTx(store Store, args []string) ([]byte, error) {
