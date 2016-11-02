@@ -24,6 +24,7 @@ import (
 )
 
 func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
+	logger.Debugf("args: %+v", args)
 	if len(args) != 1 || args[0] == "" {
 		return nil, ErrInvalidArgs
 	}
@@ -38,11 +39,14 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 
 	tx, err := pb.ParseTXBytes(txData)
 	if err != nil {
+		logger.Errorf("Parse tx bytes. %s", err.Error())
 		return nil, err
 	}
 	if tx.Founder == "" {
+		logger.Errorf("not found founder")
 		return nil, ErrTxNoFounder
 	}
+	logger.Debugf("tx body %+v", tx)
 
 	// coin stat
 	coinInfo, err := store.GetCoinInfo()
@@ -68,11 +72,13 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 		// get owner account info
 		ownerAccount, err := store.GetAccount(ownerAddr)
 		if err != nil {
+			logger.Errorf("get Account failed, %s", err.Error())
 			return nil, err
 		}
 
 		txout, ok := ownerAccount.Txouts[keyToPrevOutput.String()]
 		if !ok {
+			logger.Errorf("not found txout: %s", keyToPrevOutput.String())
 			return nil, ErrAccountNoTxOut
 		}
 
