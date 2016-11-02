@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 
 	pb "github.com/conseweb/common/assets/lepuscoin/protos"
-	"github.com/golang/protobuf/proto"
 )
 
 func (coin *Lepuscoin) queryAddrs(store Store, args []string) ([]byte, error) {

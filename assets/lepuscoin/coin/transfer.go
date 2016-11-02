@@ -84,8 +84,7 @@ func (coin *Lepuscoin) transfer(store Store, args []string) ([]byte, error) {
 
 		// can spend?
 		if txout.Until > 0 {
-			untilTime := time.Unix(txout.Until, 0).UTC()
-			if untilTime.After(time.Now().UTC()) {
+			if time.Unix(txout.Until, 0).UTC().After(time.Now().UTC()) {
 				return nil, ErrTxOutLock
 			}
 		}
