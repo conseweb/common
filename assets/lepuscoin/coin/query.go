@@ -54,7 +54,7 @@ func (coin *Lepuscoin) queryTx(store Store, args []string) ([]byte, error) {
 	}
 	logger.Debugf("query tx: %+v", tx)
 
-	return tx.Bytes()
+	return json.Marshal(tx)
 }
 
 func (coin *Lepuscoin) queryCoin(store Store, args []string) ([]byte, error) {
@@ -69,5 +69,5 @@ func (coin *Lepuscoin) queryCoin(store Store, args []string) ([]byte, error) {
 	}
 
 	logger.Debugf("query lepuscoin info: %+v", coinInfo)
-	return proto.Marshal(coinInfo)
+	return json.Marshal(coinInfo)
 }
