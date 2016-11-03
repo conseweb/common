@@ -50,7 +50,7 @@ func NewTxIn(owner, prevHash string, prevIdx uint32) *pb.TX_TXIN {
 // NewTxOut returns a new transaction output with the provided
 // transaction value and public key script.
 func NewTxOut(value uint64, addr string, untilTime time.Time) *pb.TX_TXOUT {
-	until := 0
+	var until int64 = 0
 	if untilTime.UTC().After(time.Now().UTC()) {
 		until = untilTime.UTC().Unix()
 	}
