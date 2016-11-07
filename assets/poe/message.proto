@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package main;
+
+//存储实体
+message StoreEntity {
+	//键
+	string Key = 1;
+	//长度
+	int64 Length = 2;
+	//值
+    bytes Value = 3;	
+}
+
+//查询实体
+message QueryEntity {
+	//键
+	string Key = 1;
+	//是否存在
+	bool IsExist = 2;
+}
