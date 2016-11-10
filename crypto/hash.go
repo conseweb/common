@@ -17,14 +17,12 @@ limitations under the License.
 package crypto
 
 import (
-	"crypto/md5"
 	"bytes"
+	"hash"
 )
 
-// md5 hash
-func MD5Hash(s string) string {
-	h := md5.New()
-	h.Write([]byte(s))
-
+// Hash data
+func Hash(h hash.Hash, data []byte) string {
+	h.Write(data)
 	return bytes.NewBuffer(h.Sum(nil)).String()
 }

@@ -19,14 +19,26 @@ package exec
 import (
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
+
+	"github.com/op/go-logging"
+)
+
+var (
+	execLogger = logging.MustGetLogger("exec")
 )
 
 type SignalExecuter func() error
 
+// HandleSignal handle os signals
 func HandleSignal(fs ...SignalExecuter) {
+	execLogger.Info("waitting for exit, press CTRL+C")
+
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	wg := &sync.WaitGroup{}
+	wg.Add(len(fs))
 
 	for {
 		s := <-sigChan
@@ -34,9 +46,13 @@ func HandleSignal(fs ...SignalExecuter) {
 		switch s {
 		case syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
 			for _, f := range fs {
-				f()
+				if err := f(); err != nil {
+					execLogger.Errorf("exec stop function return error: %v", err)
+				}
+				wg.Done()
 			}
 
+			wg.Wait()
 			os.Exit(0)
 		}
 	}
