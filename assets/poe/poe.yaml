@@ -1,11 +1,11 @@
-# 哈希算法函数配置
-# 目前支持的哈希算法取值范围：RIPEMD160、SHA3_224、SHA3_256、SHA3_384、SHA3_512、MD5
-# 默认哈希函数为MD5
-hash_func:
-    # 主哈希函数
-    main_hash: SHA3_256
-	# 副哈希函数
-    sub_hash: MD5
-# 日志配置
+system:
+        [{
+            "name": "base",
+            "cryptostrategy": "default",
+            "cryptostrategydefault": {
+				"mainhash": "sha3_256",
+				"subhash": "md5"
+			}
+        }]
 logging:
-    poe: warning
+        poe: warning

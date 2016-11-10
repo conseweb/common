@@ -2,10 +2,28 @@ syntax = "proto3";
 
 package main;
 
-//查询实体
+// 默认加密策略配置实体结构
+message config_crypto_strategy_default {
+	// 主哈希
+	string main_hash = 1;
+	// 副哈希
+	string sub_hash = 2;
+}
+
+// 业务系统配置实体结构
+message config_system {
+	// 业务系统名称 
+	string name = 1;
+	// 业务系统加密策略类型
+	string crypto_strategy = 2;
+	// 默认加密策略配置
+	config_crypto_strategy_default crypto_strategy_default = 3;
+}
+
+// 查询实体
 message query_result {
-	//键
+	// 键
 	string key = 1;
-	//是否存在
+	// 是否存在
 	bool exist = 2;
 }
