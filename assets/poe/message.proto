@@ -22,8 +22,10 @@ message config_system {
 
 // 查询实体
 message query_result {
-	// 键
+	// 键值
 	string key = 1;
+	// 键哈希值
+	string hash_key = 2;
 	// 是否存在
-	bool exist = 2;
+	bool exist = 3;
 }

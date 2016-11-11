@@ -104,6 +104,7 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 		if len(data) > 0 {
 			m := QueryResult{}
 			m.Key = args[i]
+			m.HashKey = hkey
 			m.Exist = true
 			list = append(list, m)
 		}
