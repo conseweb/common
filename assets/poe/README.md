@@ -84,7 +84,7 @@ REST
         },
         "ctorMsg": {
             "function": "register",
-            "args": ["xiebo","wangchuanjian","zhaoming"]
+            "args": ["base","xiebo","wangchuanjian","zhaoming"]
         },
         "secureContext": ""
     },
@@ -107,7 +107,7 @@ REST
         },
         "ctorMsg": {
             "function": "existence",
-            "args": ["xiebo","wangchuanjian","zhaoming"]
+            "args": ["base","xiebo","wangchuanjian","zhaoming"]
         },
         "secureContext": ""
     },

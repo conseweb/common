@@ -1,11 +1,18 @@
+# system 节点配置业务系统相关信息
 system:
         [{
-            "name": "base",
+			# 业务系统名称，业务差异化的区别标记
+            "name": "base", 
+			# 加密策略配置，值可选范围仅有default（标识默认策略）
             "cryptostrategy": "default",
+			# 默认加密策略
             "cryptostrategydefault": {
+				# 主哈希，取值范围（"ripemd160","sha3_224","sha3_256","sha3_384","sha3_512","md5"）
 				"mainhash": "sha3_256",
+				# 副哈希，取值范围（"ripemd160","sha3_224","sha3_256","sha3_384","sha3_512","md5"）
 				"subhash": "md5"
 			}
         }]
+# 日志节点配置		
 logging:
         poe: warning

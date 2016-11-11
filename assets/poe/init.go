@@ -15,12 +15,6 @@ const (
 	CRYPTO_STRATEGY_DEFAULT_SUB_HASH_VALUE = "md5"
 )
 
-// ChainCode Func Flags
-const (
-	INVOKE_FUNC_REGISTER = "register"
-	QUERY_FUNC_EXISTENCE = "existence"
-)
-
 // 日志记录器
 var logger = logging.MustGetLogger("poe")
 
@@ -37,15 +31,19 @@ func init() {
 }
 
 // 根据系统名称获取配置节点
-func configSystem(sysName string) (*ConfigSystem, error) {
-	var list []ConfigSystem
-	if e := viper.UnmarshalKey("system", &list); e != nil {
+func configSystem(sysName string) (cfgSys *ConfigSystem, e error) {
+	var list []*ConfigSystem
+	if e = viper.UnmarshalKey("system", &list); e != nil {
 		return nil, e
 	}
 	for _, v := range list {
 		if v.Name == sysName {
-			return &v, nil
+			cfgSys = v
+			break
 		}
 	}
-	return nil, nil
+	if cfgSys == nil {
+		return configSystem("base")
+	}
+	return cfgSys, nil
 }
