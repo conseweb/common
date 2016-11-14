@@ -84,7 +84,7 @@ REST
         },
         "ctorMsg": {
             "function": "register",
-            "args": ["base","xiebo","wangchuanjian","zhaoming"]
+            "args":["base","nicsflvowkzdegrh","zrptjuswagkxyivq","bqohtvxernjmwdka","jcrxevpmbyauingl","uhtcvkfpwgaeozbd"]
         },
         "secureContext": ""
     },
@@ -107,7 +107,7 @@ REST
         },
         "ctorMsg": {
             "function": "existence",
-            "args": ["base","xiebo","wangchuanjian","zhaoming"]
+            "args":["base","nicsflvowkzdegrh","zrptjuswagkxyivq","bqohtvxernjmwdka","jcrxevpmbyauingl","uhtcvkfpwgaeozbd"]
         },
         "secureContext": ""
     },
@@ -120,8 +120,7 @@ Response
     "jsonrpc": "2.0",
     "result": {
         "status": "OK",
-        "message": "[{\"key\":\"xiebo\",\"exist\":true},{\"key\":\"wangchuanjian\",\"exist\":true},{\"key\":\"zhaoming\",\"exist\":true}]"
-    },
+        "message":"[{\"key\":\"nicsflvowkzdegrh\",\"hash_key\":\"a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434ad41d8cd98f00b204e9800998ecf8427e10\",\"exist\":true},{\"key\":\"zrptjuswagkxyivq\",\"hash_key\":\"a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434ad41d8cd98f00b204e9800998ecf8427e10\",\"exist\":true},{\"key\":\"bqohtvxernjmwdka\",\"hash_key\":\"a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434ad41d8cd98f00b204e9800998ecf8427e10\",\"exist\":true},{\"key\":\"jcrxevpmbyauingl\",\"hash_key\":\"a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434ad41d8cd98f00b204e9800998ecf8427e10\",\"exist\":true},{\"key\":\"uhtcvkfpwgaeozbd\",\"hash_key\":\"a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434ad41d8cd98f00b204e9800998ecf8427e10\",\"exist\":true}]"},
     "id": 1
 }
 ```

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"strings"
@@ -130,7 +131,7 @@ func hashKey(cfgSys *ConfigSystem, key string) (string, error) {
 	if data, e = strategy(cfgSys).algorithm([]byte(key)); e != nil {
 		return "", e
 	}
-	return string(data), nil
+	return hex.EncodeToString(data), nil
 }
 
 // 程序入口
