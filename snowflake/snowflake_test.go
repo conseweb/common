@@ -18,7 +18,6 @@ package snowflake
 
 import (
 	"gopkg.in/check.v1"
-	"runtime"
 	"testing"
 	"time"
 )
