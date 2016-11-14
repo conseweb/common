@@ -18,7 +18,6 @@ package snowflake
 
 import (
 	"gopkg.in/check.v1"
-	"runtime"
 	"testing"
 	"time"
 )
@@ -59,39 +58,6 @@ func (t *SnowflakeTest) TestParseRole(c *check.C) {
 	id, err := t.sf.NextID(5, 0)
 	c.Check(err, check.IsNil)
 	c.Check(ParseRole(id), check.Equals, uint64(5))
-}
-
-func (t *SnowflakeTest) TestSnowflakeInParallel(c *check.C) {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	consumer := make(chan uint64)
-
-	const numID = 10000
-	generate := func() {
-		for i := 0; i < numID; i++ {
-			id, err := t.sf.NextID(1, 0)
-			c.Check(err, check.IsNil)
-
-			consumer <- id
-		}
-	}
-
-	const numGenerator = 10
-	for i := 0; i < numGenerator; i++ {
-		go generate()
-	}
-
-	ids := make(map[uint64]bool)
-	for i := 0; i < numGenerator*numID; i++ {
-		id := <-consumer
-
-		if flag, ok := ids[id]; ok && flag {
-			c.Errorf("id duplicated")
-		} else {
-			ids[id] = true
-		}
-	}
-	c.Check(len(ids), check.Equals, numGenerator*numID)
 }
 
 func (t *SnowflakeTest) BenchmarkNextID(c *check.C) {
