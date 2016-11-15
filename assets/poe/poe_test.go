@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/hex"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -49,14 +48,13 @@ func TestFunc(t *testing.T) {
 		}
 		list = append(list, string(d))
 	}
-	logger.Info(list[0])
 	s256 := sha3.New256()
 	s256.Write([]byte(array[0]))
-	fmt.Println(hex.EncodeToString(s256.Sum(nil)))
+	t.Log(hex.EncodeToString(s256.Sum(nil)))
 }
 
 func TestInvoke(t *testing.T) {
-	var args []string = []string{"base", "wangchuanjian", "zhaoming"}
+	var args []string = []string{"base", "nicsflvowkzdegrh", "zrptjuswagkxyivq", "bqohtvxernjmwdka", "jcrxevpmbyauingl", "uhtcvkfpwgaeozbd"}
 	cc := new(PoeService)
 	stub := shim.NewMockStub("ex05", cc)
 	_, err := stub.MockInvoke("1", "register", args)
@@ -67,7 +65,7 @@ func TestInvoke(t *testing.T) {
 }
 
 func TestQuery(t *testing.T) {
-	var args []string = []string{"base", "wangchuanjian", "zhaoming"}
+	var args []string = []string{"base", "nicsflvowkzdegrh", "zrptjuswagkxyivq", "bqohtvxernjmwdka", "jcrxevpmbyauingl", "uhtcvkfpwgaeozbd"}
 	cc := new(PoeService)
 	stub := shim.NewMockStub("ex05", cc)
 	data, err := stub.MockQuery("existence", args)
