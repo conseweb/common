@@ -1,12 +1,13 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
-	//"github.com/hyperledger/fabric/core/chaincode/shim"
-	"encoding/hex"
+
+	"github.com/hyperledger/fabric/core/chaincode/shim"
 
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/sha3"
