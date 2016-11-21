@@ -7,12 +7,23 @@ import (
 	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/spf13/viper"
 )
 
-var poeFuncMap map[string]poeFunc = map[string]poeFunc{
-	"register":  register,
-	"existence": existence,
-}
+var (
+	poeFuncMap map[string]poeFunc = map[string]poeFunc{
+		"register":  register,
+		"existence": existence,
+	}
+	inSlice = func(v string, sl []string) bool {
+		for _, vv := range sl {
+			if vv == v {
+				return true
+			}
+		}
+		return false
+	}
+)
 
 type (
 	// Proof of Existence Service（存在性证明服务）
@@ -49,18 +60,23 @@ func (this *PoeService) Query(stub shim.ChaincodeStubInterface, function string,
 func register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var (
 		cfgSys  *ConfigSystem
-		sysName string = args[0]
+		sysName string = strings.TrimSpace(args[0])
 		hkey    string
+		array   []string
+		index   int = 0
 		e       error
 	)
 	// 验证非空
 	if len(args) == 0 {
 		return nil, errors.New("func <register> Parameter is not valid,Cannot be empty or contain null characters")
 	}
+	if inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
+		index = 1
+	}
 	if cfgSys, e = configSystem(sysName); e != nil {
 		return nil, errors.New("func <register> error:" + e.Error())
 	}
-	for i := 1; i < len(args); i++ {
+	for i := index; i < len(args); i++ {
 		if len(strings.TrimSpace(args[i])) == 0 {
 			continue
 		}
@@ -68,6 +84,12 @@ func register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 			return nil, errors.New("func <register> error:" + e.Error())
 		}
 		if e = stub.PutState(hkey, []byte{1}); e != nil {
+			return nil, errors.New("func <register> error:" + e.Error())
+		}
+		array = append(array, hkey)
+	}
+	if len(array) > 0 {
+		if e = stub.SetEvent("invoke_completed", []byte(strings.Join(array, ","))); e != nil {
 			return nil, errors.New("func <register> error:" + e.Error())
 		}
 	}
@@ -83,16 +105,20 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 		sysName string = args[0]
 		hkey    string
 		data    []byte
+		index   int = 0
 		e       error
 	)
 	// 验证非空
 	if len(args) == 0 {
 		return nil, errors.New("func <existence> Parameter is not valid,Cannot be empty or contain null characters")
 	}
+	if inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
+		index = 1
+	}
 	if cfgSys, e = configSystem(sysName); e != nil {
 		return nil, e
 	}
-	for i := 1; i < len(args); i++ {
+	for i := index; i < len(args); i++ {
 		if len(strings.TrimSpace(args[i])) == 0 {
 			continue
 		}
