@@ -13,7 +13,7 @@ system:
         "subhash": "md5"
         }
     }]
-system_list:"base"
+system_list: "base"
 # 日志节点配置		
 logging:
     poe: warning
