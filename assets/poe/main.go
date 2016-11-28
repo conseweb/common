@@ -70,7 +70,7 @@ func register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	if len(args) == 0 {
 		return nil, errors.New("func <register> Parameter is not valid,Cannot be empty or contain null characters")
 	}
-	if inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
+	if len(sysName) > 0 && inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
 		index = 1
 	}
 	if cfgSys, e = configSystem(sysName); e != nil {
@@ -102,7 +102,7 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	var (
 		list    []QueryResult
 		cfgSys  *ConfigSystem
-		sysName string = args[0]
+		sysName string = strings.TrimSpace(args[0])
 		hkey    string
 		data    []byte
 		index   int = 0
@@ -112,7 +112,7 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	if len(args) == 0 {
 		return nil, errors.New("func <existence> Parameter is not valid,Cannot be empty or contain null characters")
 	}
-	if inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
+	if len(sysName) > 0 && inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
 		index = 1
 	}
 	if cfgSys, e = configSystem(sysName); e != nil {
