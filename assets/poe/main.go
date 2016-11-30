@@ -43,16 +43,20 @@ func (this *PoeService) Invoke(stub shim.ChaincodeStubInterface, function string
 	if fn, ok := poeFuncMap[function]; ok {
 		return fn(stub, args)
 	} else {
+		logger.Info("func <Invoke> unsupported operation")
 		return nil, errors.New("unsupported operation")
 	}
+
 }
 
 func (this *PoeService) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	if fn, ok := poeFuncMap[function]; ok {
 		return fn(stub, args)
 	} else {
+		logger.Info("func <Invoke> unsupported operation")
 		return nil, errors.New("unsupported operation")
 	}
+
 }
 
 // 注册键值
@@ -68,12 +72,15 @@ func register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	)
 	// 验证非空
 	if len(args) == 0 {
+		logger.Info("func <register> Parameter is not valid,Cannot be empty or contain null characters")
 		return nil, errors.New("func <register> Parameter is not valid,Cannot be empty or contain null characters")
 	}
 	if len(sysName) > 0 && inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
 		index = 1
 	}
+	logger.Infof("func <register> index : %v", index)
 	if cfgSys, e = configSystem(sysName); e != nil {
+		logger.Infof("func <register> error : %v", e)
 		return nil, errors.New("func <register> error:" + e.Error())
 	}
 	for i := index; i < len(args); i++ {
@@ -81,18 +88,23 @@ func register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 			continue
 		}
 		if hkey, e = hashKey(cfgSys, args[i]); e != nil {
+			logger.Infof("func <register> error : %v", e)
 			return nil, errors.New("func <register> error:" + e.Error())
 		}
 		if e = stub.PutState(hkey, []byte{1}); e != nil {
+			logger.Infof("func <register> error : %v", e)
 			return nil, errors.New("func <register> error:" + e.Error())
 		}
 		array = append(array, hkey)
 	}
 	if len(array) > 0 {
 		if e = stub.SetEvent("invoke_completed", []byte(strings.Join(array, ","))); e != nil {
+			logger.Infof("func <register> error : %v", e)
 			return nil, errors.New("func <register> error:" + e.Error())
 		}
+		logger.Info("func <register> set event invoke_completed")
 	}
+	logger.Info("func <register> over")
 	return nil, nil
 }
 
@@ -110,12 +122,15 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 	)
 	// 验证非空
 	if len(args) == 0 {
+		logger.Info("func <existence> Parameter is not valid,Cannot be empty or contain null characters")
 		return nil, errors.New("func <existence> Parameter is not valid,Cannot be empty or contain null characters")
 	}
 	if len(sysName) > 0 && inSlice(sysName, strings.Split(viper.GetString("system_list"), ",")) {
 		index = 1
 	}
+	logger.Infof("func <existence> index : %v", index)
 	if cfgSys, e = configSystem(sysName); e != nil {
+		logger.Infof("func <existence> error : %v", e)
 		return nil, e
 	}
 	for i := index; i < len(args); i++ {
@@ -123,9 +138,11 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 			continue
 		}
 		if hkey, e = hashKey(cfgSys, args[i]); e != nil {
+			logger.Infof("func <existence> error : %v", e)
 			return nil, errors.New("func <existence> error:" + e.Error())
 		}
 		if data, e = stub.GetState(hkey); e != nil {
+			logger.Infof("func <existence> error : %v", e)
 			return nil, errors.New("func <existence> error:" + e.Error())
 		}
 		if len(data) > 0 {
@@ -137,8 +154,10 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 		}
 	}
 	if data, e = json.Marshal(&list); e != nil {
+		logger.Infof("func <existence> error : %v", e)
 		return nil, errors.New("func <existence> error:" + e.Error())
 	}
+	logger.Info("func <existence> over")
 	return data, nil
 }
 
