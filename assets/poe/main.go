@@ -145,13 +145,13 @@ func existence(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) 
 			logger.Debugf("func <existence> error : %v", e)
 			return nil, errors.New("func <existence> error:" + e.Error())
 		}
+		m := QueryResult{}
+		m.Key = args[i]
+		m.HashKey = hkey
 		if len(data) > 0 {
-			m := QueryResult{}
-			m.Key = args[i]
-			m.HashKey = hkey
 			m.Exist = true
-			list = append(list, m)
 		}
+		list = append(list, m)
 	}
 	if data, e = json.Marshal(&list); e != nil {
 		logger.Debugf("func <existence> error : %v", e)
