@@ -18,27 +18,22 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
-
+	"reflect"
 	"encoding/json"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 type (
 	// Proof of Existence Service（存在性证明服务）
 	PoeService struct{}
-	poeFunc    func(shim.ChaincodeStubInterface, []string) ([]byte, error)
 )
 
 var (
 	err_unsupported_operation = fmt.Errorf("unsupported operation")
 	err_invalid_param         = fmt.Errorf("invalid param")
 	filledvalue               = []byte("1")
-	poeFuncMap                = map[string]poeFunc{
-		"register":  register,
-		"existence": existence,
-	}
 )
 
 func (this *PoeService) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
@@ -51,21 +46,21 @@ func (this *PoeService) Init(stub shim.ChaincodeStubInterface, function string, 
 }
 
 func (this *PoeService) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if fn, ok := poeFuncMap[function]; ok {
-		return fn(stub, args)
+	if function != "register" {
+		logger.Debug("unsupported operation %s", function)
+		return nil, err_unsupported_operation
 	}
 
-	logger.Debugf("unsupported operation %s", function)
-	return nil, err_unsupported_operation
+	return register(stub, args)
 }
 
 func (this *PoeService) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if fn, ok := poeFuncMap[function]; ok {
-		return fn(stub, args)
+	if function != "existence" {
+		logger.Debug("unsupported operation %s", function)
+		return nil, err_unsupported_operation
 	}
 
-	logger.Debug("unsupported operation %s", function)
-	return nil, err_unsupported_operation
+	return existence(stub, args)
 }
 
 // 注册键值
