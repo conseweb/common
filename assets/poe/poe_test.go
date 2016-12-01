@@ -34,10 +34,7 @@ func TestYaml(t *testing.T) {
 }
 
 func TestFunc(t *testing.T) {
-	sys, e := configSystem("base")
-	if e != nil {
-		t.Log(e)
-	}
+	sys := configSystem("base")
 	api := cryptoStrategyMap["default"](sys)
 	var array []string = []string{"xiebo", "xiebo"}
 	var list []string
