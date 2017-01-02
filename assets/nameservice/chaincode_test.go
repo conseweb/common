@@ -6,10 +6,31 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+type kv struct {
+	k string
+	v string
+}
+
+var param []kv = []kv{
+	kv{k: "", v: "220.181.112.200"},
+	kv{k: "www.baidu.com", v: ""},
+	kv{k: "www.baid u.com", v: "220.181.112.200"},
+	kv{k: "www.baidu.com", v: "220.18 1.112.200"},
+}
+
+var data []kv = []kv{
+	kv{k: "www.baidu.com", v: "220.181.112.200"},
+	kv{k: "www.wx.com", v: "220.181.112.201"},
+	kv{k: "www.qq.com", v: "220.181.112.202"},
+	kv{k: "www.taobao.com", v: "220.181.112.203"},
+	kv{k: "www.hao123.com", v: "220.181.112.204"},
+	kv{k: "www.360.com", v: "220.181.112.205"},
+}
+
 func checkInit01(stub *shim.MockStub, t *testing.T) {
 	data, err := stub.MockInit("1", "init", nil)
 	if err != nil {
-		t.Errorf("init failed %v", err)
+		t.Logf("init failed %v", err)
 		return
 	}
 	t.Logf("data: %s", data)
@@ -18,7 +39,7 @@ func checkInit01(stub *shim.MockStub, t *testing.T) {
 func checkInit02(stub *shim.MockStub, t *testing.T) {
 	data, err := stub.MockInit("2", "deploy", nil)
 	if err != nil {
-		t.Errorf("init failed %v", err)
+		t.Logf("init failed %v", err)
 		return
 	}
 	t.Logf("data: %s", data)
@@ -33,124 +54,59 @@ func Test_Init(t *testing.T) {
 	checkInit02(stub, t)
 }
 
-func checkInvoke01(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockInvoke("1", "add", nil)
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
+func checkAddotoParam(stub *shim.MockStub, t *testing.T) {
+	for i, obj := range param {
+		_, err := stub.MockInvoke(string(i), "addoto", []string{obj.k, obj.v})
+		if err != nil {
+			t.Logf("init failed%v: %v", i, err)
+		}
 	}
-	t.Logf("data: %s", data)
 }
 
-func checkInvoke02(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockInvoke("2", "add", []string{"wwww.baidu.co m:111.206.223.206"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
+func checkAddotoInvoke(stub *shim.MockStub, t *testing.T) {
+	for i, obj := range data {
+		_, err := stub.MockInvoke(string(i), "addoto", []string{obj.k, obj.v})
+		if err != nil {
+			t.Logf("init failed%v: %v", i, err)
+		}
 	}
-	t.Logf("data: %s", data)
 }
 
-func checkInvoke03(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockInvoke("3", "add", []string{"wwww.baidu.com::111.206.223.206"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
+func checkAddotoQuery(stub *shim.MockStub, t *testing.T) {
+	for i, obj := range data {
+		data, err := stub.MockQuery("query", []string{obj.k})
+		if err != nil {
+			t.Logf("init failed%v: %v", i, err)
+		}
+		t.Logf("data1 : %v", string(data))
+		data, err = stub.MockQuery("query", []string{obj.v})
+		if err != nil {
+			t.Logf("init failed%v: %v", i, err)
+		}
+		t.Logf("data2 : %v", string(data))
 	}
-	t.Logf("data: %s", data)
 }
 
-func checkInvoke04(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockInvoke("4", "add", []string{"wwww.baidu.com:111.206.223.206", "wwww.baidu.com:111.206.223.206"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
+func checkAddotoDel(stub *shim.MockStub, t *testing.T) {
+	for i, obj := range data {
+		_, err := stub.MockInvoke(string(i), "deloto", []string{obj.k})
+		if err != nil {
+			t.Logf("init failed%v: %v", i, err)
+		}
 	}
-	t.Logf("data: %s", data)
 }
 
-func checkInvoke05(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockInvoke("5", "add", []string{"wwww.baidu.com:111.206.223.206"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func Test_Invoke(t *testing.T) {
+func TestAddoto(t *testing.T) {
 	cc := new(NameService)
 	stub := shim.NewMockStub("namesrvc02", cc)
-	//空值检测
-	checkInvoke01(stub, t)
-	//不能包含空字符
-	checkInvoke02(stub, t)
-	//只能包含一个分隔符':'
-	checkInvoke03(stub, t)
-	//每次只处理一条数据
-	checkInvoke04(stub, t)
-	//正确返回输入参数
-	checkInvoke05(stub, t)
-}
-
-func checkQuery01(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockQuery("query", nil)
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func checkQuery02(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockQuery("query", []string{" "})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func checkQuery03(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockQuery("query", []string{"wwww.baidu.com", "wwww.baidu.com"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func checkQuery04(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockQuery("query", []string{"wwww.baidu.com"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func checkQuery05(stub *shim.MockStub, t *testing.T) {
-	data, err := stub.MockQuery("query", []string{"111.206.223.206"})
-	if err != nil {
-		t.Errorf("query failed %v", err)
-		return
-	}
-	t.Logf("data: %s", data)
-}
-
-func Test_Query(t *testing.T) {
-	cc := new(NameService)
-	stub := shim.NewMockStub("namesrvc03", cc)
-	//存入数据，存两份，第二份数据 kv 交换存储
-	checkInvoke05(stub, t)
-	//空值检测
-	checkQuery01(stub, t)
-	//参数不能为空
-	checkQuery02(stub, t)
-	//每次只处理一条数据
-	checkQuery03(stub, t)
-	//get v by k
-	checkQuery04(stub, t)
-	//get k by v
-	checkQuery05(stub, t)
+	checkAddotoParam(stub, t)
+	t.Log("===checkAddotoParam over!")
+	checkAddotoInvoke(stub, t)
+	t.Log("===checkAddotoInvoke over!")
+	checkAddotoQuery(stub, t)
+	t.Log("===checkAddotoQuery over!")
+	checkAddotoDel(stub, t)
+	t.Log("===checkAddotoDel over!")
+	checkAddotoQuery(stub, t)
+	t.Log("===checkAddotoQuery over!")
 }

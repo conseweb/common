@@ -39,17 +39,17 @@ start docker
 ```
 docker-compose up
 ```
-build poe and run locally
+build nameservice and run locally
 ```
-CORE_CHAINCODE_ID_NAME=poe_cc_demo_001 CORE_PEER_ADDRESS=0.0.0.0:7051 ./poe
+CORE_CHAINCODE_ID_NAME=namesrvc_cc_demo_001 CORE_PEER_ADDRESS=0.0.0.0:7051 ./nameservice
 ```
 ```
 docker ps -a
 docker exec -it xxxx bash
 ```
-### deploy request
+### deploy examples
 
-REST
+deploy request
 ```
 {
     "jsonrpc": "2.0",
@@ -61,19 +61,23 @@ REST
         },
         "ctorMsg": {
             "function": "deploy",
-            "args": [
-            ]
+            "args": []
         },
-        "secureContext": ""
+        "secureContext": "jim"
     },
     "id": 1
 }
 ```
 
-### invoke request
+### transfer examples
 
-#### invoke_register
-REST
+#### one to one
+- 添加一条数据(一对一)
+- 参数规范： 不能包含空字符;每次只处理一条数据;args[0] 为key, args[1] 为value
+- 存储会存储两份，第二次存储k和v交换存储
+- kv 都不存在或k存在v 不存在时存储，存储后，原v 值将被覆盖， kv交换 逻辑一样
+
+add request
 ```
 {
     "jsonrpc": "2.0",
@@ -84,19 +88,37 @@ REST
             "name": "namesrvc_cc_demo_001"
         },
         "ctorMsg": {
-            "function": "add",
+            "function": "addoto",
             "args":["wwww.baidu.com:111.206.223.206"]
         },
-        "secureContext": ""
+        "secureContext": "jim"
     },
     "id": 1
 }
 ```
+- 删除一条数据
+- 先根据k 删除，再用查出得v 作为新k删除
+del request
 
-### query request
-#### query_existence
-
-REST
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_001"
+        },
+        "ctorMsg": {
+            "function": "deloto",
+            "args":["wwww.baidu.com"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query request
 ```
 {
     "jsonrpc": "2.0",
@@ -110,18 +132,215 @@ REST
             "function": "query",
             "args":["wwww.baidu.com"]
         },
-        "secureContext": ""
+        "secureContext": "jim"
     },
     "id": 1
 }
 ```
-Response
+query response
 ```
 {
     "jsonrpc": "2.0",
     "result": {
         "status": "OK",
         "message":"111.206.223.206"},
+    "id": 1
+}
+```
+
+#### one to many
+- 添加一条数据(一对多)
+- 参数规范： 不能包含空字符;每次只处理一条数据;args[0] 为key, args[1] 为value
+- 存储会存储两份，第二次存储k和v交换存储
+- kv 都不存在或k存在v 不存在时存储，存储后，原来的v = 原有v,现有v， kv交换逻辑： 当kv都不存在或者k 存在v 不存在时存储，存储后，原v 值将被覆盖
+
+invoke request 1
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_002"
+        },
+        "ctorMsg": {
+            "function": "addotm",
+            "args":["wwww.baidu.com:111.206.223.206"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+invoke request 2
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_002"
+        },
+        "ctorMsg": {
+            "function": "addotm",
+            "args":["wwww.baidu.com:111.206.223.207"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query request
+```
+{
+    "jsonrpc": "2.0",
+    "method": "query",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_002"
+        },
+        "ctorMsg": {
+            "function": "query",
+            "args":["wwww.baidu.com"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query response
+```
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "status": "OK",
+        "message":"111.206.223.206,111.206.223.207"},
+    "id": 1
+}
+```
+
+#### many to many
+
+- 添加一条数据(多对多)
+- 参数规范： 不能包含空字符;每次只处理一条数据;args[0] 为key, args[1] 为value
+- 存储会存储两份，第二次存储k和v交换存储
+- kv 都不存在或k存在v 不存在时存储，存储后，原来的v = 原有v,现有v， kv交换逻辑一样
+
+invoke request 1
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_003"
+        },
+        "ctorMsg": {
+            "function": "addmtm",
+            "args":["wwww.baidu.com:111.206.223.206"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+invoke request 2
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_003"
+        },
+        "ctorMsg": {
+            "function": "addmtm",
+            "args":["wwww.baidu.com:111.206.223.207"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+invoke request 3
+```
+{
+    "jsonrpc": "2.0",
+    "method": "invoke",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_003"
+        },
+        "ctorMsg": {
+            "function": "addmtm",
+            "args":["wwww.qq.com:111.206.223.207"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query request 1
+```
+{
+    "jsonrpc": "2.0",
+    "method": "query",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_003"
+        },
+        "ctorMsg": {
+            "function": "query",
+            "args":["wwww.baidu.com"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query response
+```
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "status": "OK",
+        "message":"111.206.223.206,111.206.223.207"},
+    "id": 1
+}
+```
+query request 2
+```
+{
+    "jsonrpc": "2.0",
+    "method": "query",
+    "params": {
+        "type": 1,
+        "chaincodeID": {
+            "name": "namesrvc_cc_demo_003"
+        },
+        "ctorMsg": {
+            "function": "query",
+            "args":["111.206.223.207"]
+        },
+        "secureContext": "jim"
+    },
+    "id": 1
+}
+```
+query response
+```
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "status": "OK",
+        "message":"wwww.baidu.com,wwww.qq.com"},
     "id": 1
 }
 ```
