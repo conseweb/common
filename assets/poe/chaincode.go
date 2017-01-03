@@ -17,10 +17,10 @@ limitations under the License.
 package main
 
 import (
-	"fmt"
-	"strings"
-	"reflect"
 	"encoding/json"
+	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -40,7 +40,6 @@ func (this *PoeService) Init(stub shim.ChaincodeStubInterface, function string, 
 	if function != "deploy" {
 		return nil, err_unsupported_operation
 	}
-
 	logger.Debug("deploy poe successfully")
 	return nil, nil
 }
