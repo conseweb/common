@@ -17,8 +17,6 @@ limitations under the License.
 package coin
 
 import (
-	"errors"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/flogging"
 	"github.com/op/go-logging"
@@ -32,11 +30,8 @@ type Lepuscoin struct {
 }
 
 // Init deploy Lepuscoin into vp
-func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (coin *Lepuscoin) Init(stub shim.ChaincodeStubInterface) ([]byte, error) {
 	flogging.LoggingInit("lepuscoin")
-	if function != "deploy" {
-		return nil, errors.New("invalid function name, 'deploy' only")
-	}
 
 	// construct a new store
 	store := MakeChaincodeStore(stub)
@@ -58,7 +53,9 @@ const (
 )
 
 // Invoke
-func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (coin *Lepuscoin) Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	function, args := stub.GetFunctionAndParameters()
+
 	// construct a new store
 	store := MakeChaincodeStore(stub)
 
@@ -82,7 +79,9 @@ const (
 )
 
 // Query
-func (coin *Lepuscoin) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (coin *Lepuscoin) Query(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	function, args := stub.GetFunctionAndParameters()
+
 	// construct a new store
 	store := MakeChaincodeStore(stub)
 
