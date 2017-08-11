@@ -63,12 +63,5 @@ func (req *LoginUserReq) GetSignature() []byte {
 	return req.Sign
 }
 
-// SetSignature set signature
-func (req *BindDeviceReq) SetSignature(sign []byte) {
-	req.Sign = sign
-}
 
-// GetSignature get signature
-func (req *BindDeviceReq) GetSignature() []byte {
-	return req.Sign
-}
+
